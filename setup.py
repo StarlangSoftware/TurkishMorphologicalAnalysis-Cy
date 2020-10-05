@@ -7,6 +7,7 @@ setup(
     name='NlpToolkit-MorphologicalAnalysis-Cy',
     version='1.0.0',
     packages=['MorphologicalAnalysis'],
+    package_data={'MorphologicalAnalysis': ['*.pxd', '*.pyx', '*.c', '*.py']},
     url='https://github.com/olcaytaner/TurkishMorphologicalAnalysis-Cy',
     license='',
     author='olcaytaner',

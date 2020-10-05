@@ -2,29 +2,15 @@ import copy
 import re
 
 from Corpus.Sentence cimport Sentence
-from DataStructure.Cache.LRUCache cimport LRUCache
-from Dictionary.Trie.Trie cimport Trie
-from Dictionary.TxtDictionary cimport TxtDictionary
-from Dictionary.TxtWord cimport TxtWord
 from Dictionary.Word cimport Word
 
-from MorphologicalAnalysis.FiniteStateMachine cimport FiniteStateMachine
-from MorphologicalAnalysis.FsmParse cimport FsmParse
 from MorphologicalAnalysis.FsmParseList cimport FsmParseList
-from MorphologicalAnalysis.MetamorphicParse cimport MetamorphicParse
-from MorphologicalAnalysis.MorphologicalParse cimport MorphologicalParse
 from MorphologicalAnalysis.MorphologicalTag import MorphologicalTag
 from MorphologicalAnalysis.State cimport State
 from MorphologicalAnalysis.Transition cimport Transition
 
 
 cdef class FsmMorphologicalAnalyzer:
-
-    cdef Trie __dictionaryTrie
-    cdef FiniteStateMachine __finiteStateMachine
-    cdef TxtDictionary __dictionary
-    cdef LRUCache __cache
-    cdef dict __mostUsedPatterns
 
     MAX_DISTANCE = 2
 

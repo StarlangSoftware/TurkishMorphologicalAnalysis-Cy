@@ -4,6 +4,7 @@ MorphologicalAnalysis/FiniteStateMachine.c
 MorphologicalAnalysis/FiniteStateMachine.pxd
 MorphologicalAnalysis/FiniteStateMachine.pyx
 MorphologicalAnalysis/FsmMorphologicalAnalyzer.c
+MorphologicalAnalysis/FsmMorphologicalAnalyzer.pxd
 MorphologicalAnalysis/FsmMorphologicalAnalyzer.pyx
 MorphologicalAnalysis/FsmParse.c
 MorphologicalAnalysis/FsmParse.pxd

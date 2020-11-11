@@ -32,6 +32,7 @@ cdef class FsmMorphologicalAnalyzer:
             the file to read the misspelled file name.
         """
         self.__mostUsedPatterns = {}
+        self.__parsedSurfaceForms = None
         if dictionaryFileName is None:
             self.__dictionary = TxtDictionary()
         else:
@@ -39,6 +40,15 @@ cdef class FsmMorphologicalAnalyzer:
         self.__finiteStateMachine = FiniteStateMachine(fileName)
         self.__dictionaryTrie = self.__dictionary.prepareTrie()
         self.__cache = LRUCache(cacheSize)
+
+    cpdef addParsedSurfaceForms(self, str fileName):
+        cdef list lines
+        cdef str line
+        self.__parsedSurfaceForms = set()
+        file = open(fileName, "r")
+        lines = file.readlines()
+        for line in lines:
+            self.__parsedSurfaceForms.add(line.strip())
 
     cpdef set getPossibleWords(self, MorphologicalParse morphologicalParse, MetamorphicParse metamorphicParse):
         """
@@ -945,6 +955,8 @@ cdef class FsmMorphologicalAnalyzer:
             return result
         elif isinstance(sentenceOrSurfaceForm, str):
             surfaceForm = sentenceOrSurfaceForm
+            if self.__parsedSurfaceForms is not None and surfaceForm not in self.__parsedSurfaceForms:
+                return FsmParseList([])
             if self.__cache.contains(surfaceForm):
                 return self.__cache.get(surfaceForm)
             if self.patternMatches("(\\w|Ç|Ş|İ|Ü|Ö)\\.", surfaceForm):
@@ -1001,7 +1013,8 @@ cdef class FsmMorphologicalAnalyzer:
                             newWord.addFlag("IS_KIS")
                             fsmParse = self.__analysis(self.__toLower(surfaceForm), self.isProperNoun(surfaceForm))
             fsmParseList = FsmParseList(fsmParse)
-            self.__cache.add(surfaceForm, fsmParseList)
+            if fsmParseList.size() > 0:
+                self.__cache.add(surfaceForm, fsmParseList)
             return fsmParseList
 
     cpdef robustMorphologicalAnalysis(self, sentenceOrSurfaceForm):

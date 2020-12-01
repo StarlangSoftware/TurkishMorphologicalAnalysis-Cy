@@ -12,7 +12,5 @@ cdef class FsmParseList:
     cpdef reduceToParsesWithSameRootAndPos(self, Word currentWithPos)
     cpdef FsmParse getParseWithLongestRootWord(self)
     cpdef reduceToParsesWithSameRoot(self, str currentRoot)
-    cpdef str __defaultCaseForParseString(self, str rootForm, str parseString, str partOfSpeech)
-    cpdef FsmParse caseDisambiguator(self)
     cpdef list constructParseListForDifferentRootWithPos(self)
     cpdef str parsesWithoutPrefixAndSuffix(self)

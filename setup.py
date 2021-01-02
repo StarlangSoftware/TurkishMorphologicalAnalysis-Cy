@@ -8,7 +8,7 @@ setup(
     version='1.0.8',
     packages=['MorphologicalAnalysis'],
     package_data={'MorphologicalAnalysis': ['*.pxd', '*.pyx', '*.c', '*.py']},
-    url='https://github.com/olcaytaner/TurkishMorphologicalAnalysis-Cy',
+    url='https://github.com/StarlangSoftware/TurkishMorphologicalAnalysis-Cy',
     license='',
     author='olcaytaner',
     author_email='olcay.yildiz@ozyegin.edu.tr',

@@ -11,7 +11,7 @@ setup(
     url='https://github.com/olcaytaner/TurkishMorphologicalAnalysis-Cy',
     license='',
     author='olcaytaner',
-    author_email='olcaytaner@isikun.edu.tr',
+    author_email='olcay.yildiz@ozyegin.edu.tr',
     description='Turkish Morphological Analysis',
     install_requires=['NlpToolkit-Dictionary-Cy', 'NlpToolkit-Corpus-Cy', 'NlpToolkit-DataStructure-Cy']
 )

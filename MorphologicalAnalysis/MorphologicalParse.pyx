@@ -765,28 +765,23 @@ cdef class MorphologicalParse:
         if self.containsTag(MorphologicalTag.PASTPARTICIPLE) or self.containsTag(MorphologicalTag.FUTUREPARTICIPLE) \
                 or self.containsTag(MorphologicalTag.PRESENTPARTICIPLE):
             return "Part"
-        if self.containsTag(MorphologicalTag.INFINITIVE) or self.containsTag(MorphologicalTag.INFINITIVE2):
-            return "Vnoun"
         if self.containsTag(MorphologicalTag.SINCEDOINGSO) or self.containsTag(MorphologicalTag.WITHOUTHAVINGDONESO) \
                 or self.containsTag(MorphologicalTag.WITHOUTBEINGABLETOHAVEDONESO) \
                 or self.containsTag(MorphologicalTag.BYDOINGSO) or self.containsTag(MorphologicalTag.AFTERDOINGSO) \
                 or self.containsTag(MorphologicalTag.INFINITIVE3):
             return "Conv"
-        if self.containsTag(MorphologicalTag.AORIST) or self.containsTag(MorphologicalTag.PASTTENSE) \
-                or self.containsTag(MorphologicalTag.PROGRESSIVE1) or self.containsTag(MorphologicalTag.FUTURE):
-            return "Fin"
         return ""
 
-    cpdef list getUniversalDependencyFeatures(self):
+    cpdef list getUniversalDependencyFeatures(self, str uPos):
         cdef list featureList
         cdef str pronType, numType, reflex, degree, number, case_, definite, polarity, person
         cdef str voice, aspect, tense, mood, verbForm
         featureList = []
         pronType = self.getPronType()
-        if pronType != "":
+        if pronType != ""  and uPos != "ADJ" and uPos != "VERB" and uPos != "CCONJ":
             featureList.append("PronType=" + pronType)
         numType = self.getNumType()
-        if numType != "":
+        if numType != "" and uPos != "VERB":
             featureList.append("NumType=" + numType)
         reflex = self.getReflex()
         if reflex != "":
@@ -811,19 +806,19 @@ cdef class MorphologicalParse:
             if polarity != "":
                 featureList.append("Polarity=" + polarity)
             person = self.getPerson()
-            if person != "":
+            if person != "" and uPos != "PROPN":
                 featureList.append("Person=" + person)
             voice = self.getVoice()
             if voice != "":
                 featureList.append("Voice=" + voice)
             aspect = self.getAspect()
-            if aspect != "":
+            if aspect != "" and uPos != "PROPN":
                 featureList.append("Aspect=" + aspect)
             tense = self.getTense()
-            if tense != "":
+            if tense != "" and uPos != "PROPN":
                 featureList.append("Tense=" + tense)
             mood = self.getMood()
-            if mood != "":
+            if mood != "" and uPos != "PROPN":
                 featureList.append("Mood=" + mood)
             verbForm = self.getVerbForm()
             if verbForm != "":
@@ -848,7 +843,7 @@ cdef class MorphologicalParse:
             return "INTJ"
         if self.isVerb():
             return "VERB"
-        if self.isPunctuation():
+        if self.isPunctuation() or self.isHashTag():
             return "PUNCT"
         if self.containsTag(MorphologicalTag.DETERMINER):
             return "DET"

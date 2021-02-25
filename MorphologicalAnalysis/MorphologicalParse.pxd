@@ -61,5 +61,5 @@ cdef class MorphologicalParse:
     cpdef str getTense(self)
     cpdef str getMood(self)
     cpdef str getVerbForm(self)
-    cpdef list getUniversalDependencyFeatures(self)
+    cpdef list getUniversalDependencyFeatures(self, str uPos)
     cpdef str getUniversalDependencyPos(self)

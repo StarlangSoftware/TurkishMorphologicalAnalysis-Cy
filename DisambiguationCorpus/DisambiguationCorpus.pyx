@@ -1,7 +1,7 @@
 from Corpus.Sentence cimport Sentence
 from MorphologicalAnalysis.MorphologicalParse cimport MorphologicalParse
 
-from MorphologicalDisambiguation.DisambiguatedWord cimport DisambiguatedWord
+from DisambiguationCorpus.DisambiguatedWord cimport DisambiguatedWord
 
 
 cdef class DisambiguationCorpus(Corpus):

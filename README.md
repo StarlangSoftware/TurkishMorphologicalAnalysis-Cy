@@ -66,7 +66,7 @@ Steps for opening the cloned project:
 
 * Start IDE
 * Select **File | Open** from main menu
-* Choose `DataStructure-CY` file
+* Choose `MorphologicalAnalysis-Cy` file
 * Select open as project option
 
 Detailed Description

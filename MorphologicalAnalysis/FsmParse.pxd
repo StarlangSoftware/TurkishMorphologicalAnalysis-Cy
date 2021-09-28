@@ -28,3 +28,4 @@ cdef class FsmParse(MorphologicalParse):
     cpdef str transitionList(self)
     cpdef str suffixList(self)
     cpdef str withList(self)
+    cpdef list getWithList(self)

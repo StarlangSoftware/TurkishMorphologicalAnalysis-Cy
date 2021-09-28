@@ -562,6 +562,9 @@ cdef class FsmParse(MorphologicalParse):
                 result = result + "+" + self.__suffixList[i].getName() + "(" + self.__formList[i] + ")"
         return result
 
+    cpdef list getWithList(self):
+        return self.__withList
+
     cpdef str withList(self):
         """
         The withList method gets the root as a result str then loops through the withList and concatenates each item

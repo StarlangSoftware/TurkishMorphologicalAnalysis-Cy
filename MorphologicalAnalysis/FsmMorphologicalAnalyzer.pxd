@@ -1,3 +1,4 @@
+from Corpus.Sentence cimport Sentence
 from Dictionary.Trie.Trie cimport Trie
 from Dictionary.TxtDictionary cimport TxtDictionary
 from DataStructure.Cache.LRUCache cimport LRUCache
@@ -32,6 +33,8 @@ cdef class FsmMorphologicalAnalyzer:
     cpdef list __parseWord(self, list fsmParse, maxLengthOrSurfaceForm)
     cpdef list morphologicalAnalysisRoot(self, str surfaceForm, TxtWord root, state=*)
     cpdef list generateAllParses(self, TxtWord root, int maxLength)
+    cpdef str replaceRootWord(self, FsmParse parse, TxtWord newRoot)
+    cpdef Sentence replaceWord(self, Sentence original, str previousWord, str newWord)
     cpdef bint __analysisExists(self, TxtWord rootWord, str surfaceForm, bint isProper)
     cpdef list __analysis(self, str surfaceForm, bint isProper)
     cpdef bint patternMatches(self, str expr, str value)

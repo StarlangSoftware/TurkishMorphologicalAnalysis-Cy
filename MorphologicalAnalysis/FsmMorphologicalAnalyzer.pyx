@@ -1,6 +1,7 @@
 import copy
 import re
 
+import pkg_resources
 from Corpus.Sentence cimport Sentence
 from Dictionary.TxtWord cimport TxtWord
 from Dictionary.Word cimport Word
@@ -15,7 +16,8 @@ cdef class FsmMorphologicalAnalyzer:
 
     MAX_DISTANCE = 2
 
-    def __init__(self, dictionaryFileName=None, misspelledFileName=None, fileName="turkish_finite_state_machine.xml",
+    def __init__(self, dictionaryFileName=None, misspelledFileName=None,
+                 fileName=pkg_resources.resource_filename(__name__, 'data/turkish_finite_state_machine.xml'),
                  cacheSize=10000000):
         """
         Constructor of FsmMorphologicalAnalyzer class. It generates a new TxtDictionary type dictionary from

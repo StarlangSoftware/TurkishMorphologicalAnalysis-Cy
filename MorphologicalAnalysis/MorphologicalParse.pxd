@@ -1,7 +1,6 @@
 from Dictionary.Word cimport Word
 
 from MorphologicalAnalysis.InflectionalGroup cimport InflectionalGroup
-from MorphologicalAnalysis.MorphologicalTag import MorphologicalTag
 
 
 cdef class MorphologicalParse:

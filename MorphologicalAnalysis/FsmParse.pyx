@@ -415,6 +415,12 @@ cdef class FsmParse(MorphologicalParse):
         If it is "DuplicateRoot", it assigns concatenation of first item of formList and +DUP to the result String.
         Ex : Allak
 
+        If it is "CodeRoot", it assigns concatenation of first item of formList and +CODE to the result String.
+        Ex : 5000-WX
+
+        If it is "MetricRoot", it assigns concatenation of first item of formList and +METRIC to the result String.
+        Ex : 6cmx12cm
+
         If it is "QuestionRoot", it assigns concatenation of first item of formList and +QUES to the result String.
         Ex : Mı
 
@@ -501,6 +507,10 @@ cdef class FsmParse(MorphologicalParse):
             result = self.__formList[0] + "+INTERJ"
         elif self.__suffixList[0].getName() == "DuplicateRoot":
             result = self.__formList[0] + "+DUP"
+        elif self.__suffixList[0].getName() == "CodeRoot":
+            result = self.__formList[0] + "+CODE"
+        elif self.__suffixList[0].getName() == "MetricRoot":
+            result = self.__formList[0] + "+METRIC"
         elif self.__suffixList[0].getName() == "QuestionRoot":
             result = "mi+QUES"
         elif self.__suffixList[0].getName() == "PostP":

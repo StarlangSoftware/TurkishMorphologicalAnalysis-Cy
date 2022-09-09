@@ -10,10 +10,32 @@ from MorphologicalAnalysis.Transition import Transition
 
 class FsmMorphologicalAnalyzerTest(unittest.TestCase):
 
-    fsm : FsmMorphologicalAnalyzer
+    fsm: FsmMorphologicalAnalyzer
 
     def setUp(self) -> None:
         self.fsm = FsmMorphologicalAnalyzer()
+
+    def test_generateAllParses(self):
+        testWords = ["göç", "açıkla", "yıldönümü",
+                     "resim", "hal", "emlak", "git",
+                     "kavur", "ye", "yemek", "ak",
+                     "sıska", "yıka", "bul", "cevapla",
+                     "coş", "böl", "del", "giy",
+                     "kaydol", "anla", "çök", "çık",
+                     "doldur", "azal", "göster", "aksa", "cenk", "kalp"]
+        for testWord in testWords:
+            word = self.fsm.getDictionary().getWord(testWord)
+            if isinstance(word, TxtWord):
+                parsesExpected = []
+                file = open("../parses/" + word.getName() + ".txt", 'r')
+                lines = file.readlines()
+                file.close()
+                for line in lines:
+                    parsesExpected.append(line.split()[1].strip())
+                parsesGenerated = self.fsm.generateAllParses(word, len(word.getName()) + 5)
+                self.assertTrue(len(parsesExpected), len(parsesGenerated))
+                for parseGenerated in parsesGenerated:
+                    self.assertTrue(parseGenerated.__str__() in parsesExpected)
 
     def test_morphologicalAnalysisDataTimeNumber(self):
         self.assertTrue(self.fsm.morphologicalAnalysis("3/4").size() != 0)

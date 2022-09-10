@@ -6,16 +6,16 @@ from MorphologicalAnalysis.FsmParse import FsmParse
 
 class FsmParseTest(unittest.TestCase):
 
-    parse1 : FsmParse 
-    parse2 : FsmParse 
-    parse3 : FsmParse 
-    parse4 : FsmParse 
-    parse5 : FsmParse 
-    parse6 : FsmParse 
-    parse7 : FsmParse 
-    parse8 : FsmParse 
-    parse9 : FsmParse
-    parse10 : FsmParse
+    parse1: FsmParse
+    parse2: FsmParse
+    parse3: FsmParse
+    parse4: FsmParse
+    parse5: FsmParse
+    parse6: FsmParse
+    parse7: FsmParse
+    parse8: FsmParse
+    parse9: FsmParse
+    parse10: FsmParse
 
     def setUp(self) -> None:
         self.fsm = FsmMorphologicalAnalyzer()

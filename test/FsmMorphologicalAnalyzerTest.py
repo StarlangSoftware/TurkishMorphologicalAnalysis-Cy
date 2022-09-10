@@ -211,5 +211,6 @@ class FsmMorphologicalAnalyzerTest(unittest.TestCase):
         self.assertEqual("Yemin billah vermişlerdi vazoyu kırmadığına", self.fsm.replaceWord(Sentence("Yemin etmişlerdi vazoyu kırmadığına"), "yemin et", "yemin billah ver").__str__())
         self.assertEqual("Yemin etmişlerdi vazoyu kırmadığına", self.fsm.replaceWord(Sentence("Yemin billah vermişlerdi vazoyu kırmadığına"), "yemin billah ver", "yemin et").__str__())
 
+
 if __name__ == '__main__':
     unittest.main()

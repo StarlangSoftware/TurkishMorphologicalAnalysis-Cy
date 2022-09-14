@@ -8,24 +8,24 @@ from MorphologicalAnalysis.FsmParseList import FsmParseList
 
 class FsmParseListTest(unittest.TestCase):
 
-    parse1 : FsmParseList
-    parse2 : FsmParseList
-    parse3 : FsmParseList
-    parse4 : FsmParseList
-    parse5 : FsmParseList
-    parse6 : FsmParseList
-    parse7 : FsmParseList
-    parse8 : FsmParseList
-    parse9 : FsmParseList
-    parse10 : FsmParseList
-    parse11 : FsmParseList
-    parse12 : FsmParseList
-    parse13 : FsmParseList
-    parse14 : FsmParseList
-    parse15 : FsmParseList
-    parse16 : FsmParseList
-    parse17 : FsmParseList
-    parse18 : FsmParseList
+    parse1: FsmParseList
+    parse2: FsmParseList
+    parse3: FsmParseList
+    parse4: FsmParseList
+    parse5: FsmParseList
+    parse6: FsmParseList
+    parse7: FsmParseList
+    parse8: FsmParseList
+    parse9: FsmParseList
+    parse10: FsmParseList
+    parse11: FsmParseList
+    parse12: FsmParseList
+    parse13: FsmParseList
+    parse14: FsmParseList
+    parse15: FsmParseList
+    parse16: FsmParseList
+    parse17: FsmParseList
+    parse18: FsmParseList
 
     def setUp(self) -> None:
         fsm = FsmMorphologicalAnalyzer()

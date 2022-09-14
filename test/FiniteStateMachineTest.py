@@ -83,5 +83,6 @@ class FiniteStateMachineTest(unittest.TestCase):
         self.assertEqual("LOC", topList[4][1])
         self.assertEqual(24, topList[4][0])
 
+
 if __name__ == '__main__':
     unittest.main()

@@ -5,7 +5,7 @@ from MorphologicalAnalysis.MorphologicalParse cimport MorphologicalParse
 
 cdef class MetamorphicParse:
 
-    cdef list __metaMorphemeList
+    cdef list __meta_morpheme_list
     cdef Word __root
 
     cpdef list getMetaMorphemeTag(self, str tag)

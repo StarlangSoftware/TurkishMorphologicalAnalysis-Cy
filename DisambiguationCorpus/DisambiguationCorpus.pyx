@@ -11,28 +11,28 @@ cdef class DisambiguationCorpus(Corpus):
         Constructor which creates a list of sentences and a CounterHashMap of wordList.
         """
         cdef list lines
-        cdef Sentence newSentence
+        cdef Sentence new_sentence
         cdef str line, word, parse
-        cdef DisambiguatedWord newWord
+        cdef DisambiguatedWord new_word
         super().__init__()
         if fileName is not None:
-            inputFile = open(fileName, "r", encoding="utf8")
-            lines = inputFile.readlines()
-            newSentence = Sentence()
+            input_file = open(fileName, "r", encoding="utf8")
+            lines = input_file.readlines()
+            new_sentence = Sentence()
             for line in lines:
                 word = line[:line.index("\t")]
                 parse = line[line.index("\t") + 1:]
                 if len(word) > 0 and len(parse) > 0:
-                    newWord = DisambiguatedWord(word, MorphologicalParse(parse.strip()))
+                    new_word = DisambiguatedWord(word, MorphologicalParse(parse.strip()))
                     if word == "<S>":
-                        newSentence = Sentence()
+                        new_sentence = Sentence()
                     elif word == "</S>":
-                        self.addSentence(newSentence)
+                        self.addSentence(new_sentence)
                     elif word == "<DOC>" or word == "</DOC>" or word == "<TITLE>" or word == "</TITLE>":
                         pass
                     else:
-                        newSentence.addWord(newWord)
-            inputFile.close()
+                        new_sentence.addWord(new_word)
+            input_file.close()
 
     cpdef writeToFile(self, str fileName):
         """
@@ -46,13 +46,13 @@ cdef class DisambiguationCorpus(Corpus):
         """
         cdef Sentence sentence
         cdef DisambiguatedWord word
-        outputFile = open(fileName, "w", encoding="utf8")
-        outputFile.write("<DOC>\t<DOC>+BDTag\n")
+        output_file = open(fileName, "w", encoding="utf8")
+        output_file.write("<DOC>\t<DOC>+BDTag\n")
         for sentence in self.sentences:
-            outputFile.write("<S>\t<S>+BSTag\n")
+            output_file.write("<S>\t<S>+BSTag\n")
             for word in sentence.words:
                 if isinstance(word, DisambiguatedWord):
-                    outputFile.write(word.getName() + "\t" + word.getParse().__str__() + "\n")
-            outputFile.write("</S>\t</S>+ESTag\n")
-        outputFile.write("</DOC>\t</DOC>+EDTag")
-        outputFile.close()
+                    output_file.write(word.getName() + "\t" + word.getParse().__str__() + "\n")
+            output_file.write("</S>\t</S>+ESTag\n")
+        output_file.write("</DOC>\t</DOC>+EDTag")
+        output_file.close()

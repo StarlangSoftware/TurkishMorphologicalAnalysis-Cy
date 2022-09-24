@@ -6,7 +6,9 @@ from MorphologicalAnalysis.InflectionalGroup cimport InflectionalGroup
 
 cdef class FsmParse(MorphologicalParse):
 
-    def __init__(self, root, startState=None):
+    def __init__(self,
+                 root,
+                 startState=None):
         """
         Another constructor of FsmParse class which takes a TxtWord root and a State as inputs.
         First, initializes root variable with this TxtWord. It also initializes form with root's name, pos and
@@ -33,15 +35,15 @@ cdef class FsmParse(MorphologicalParse):
         if startState is not None:
             self.__form = self.root.getName()
             self.__pos = startState.getPos()
-            self.__initialPos = startState.getPos()
-            self.__suffixList = []
-            self.__suffixList.append(startState)
-            self.__formList = []
-            self.__formList.append(self.__form)
-            self.__transitionList = []
-            self.__withList = []
-        self.__verbAgreement = None
-        self.__possesiveAgreement = None
+            self.__initial_pos = startState.getPos()
+            self.__suffix_list = []
+            self.__suffix_list.append(startState)
+            self.__form_list = []
+            self.__form_list.append(self.__form)
+            self.__transition_list = []
+            self.__with_list = []
+        self.__verb_agreement = None
+        self.__possesive_agreement = None
 
     def __eq__(self, other):
         return self.transitionList() == other.transitionList()
@@ -69,10 +71,10 @@ cdef class FsmParse(MorphologicalParse):
             iGs.append(parse[:parse.index("^DB+")])
             parse = parse[parse.index("^DB+") + 4:]
         iGs.append(parse)
-        self.inflectionalGroups = []
-        self.inflectionalGroups.append(InflectionalGroup(iGs[0][iGs[0].index("+") + 1:]))
+        self.inflectional_groups = []
+        self.inflectional_groups.append(InflectionalGroup(iGs[0][iGs[0].index("+") + 1:]))
         for i in range(1, len(iGs)):
-            self.inflectionalGroups.append(InflectionalGroup(iGs[i]))
+            self.inflectional_groups.append(InflectionalGroup(iGs[i]))
 
     cpdef str getVerbAgreement(self):
         """
@@ -83,7 +85,7 @@ cdef class FsmParse(MorphologicalParse):
         str
             The verbAgreement variable.
         """
-        return self.__verbAgreement
+        return self.__verb_agreement
 
     cpdef str getPossesiveAgreement(self):
         """
@@ -94,7 +96,7 @@ cdef class FsmParse(MorphologicalParse):
         str
             The possesiveAgreement variable.
         """
-        return self.__possesiveAgreement
+        return self.__possesive_agreement
 
     cpdef setAgreement(self, str transitionName):
         """
@@ -109,10 +111,10 @@ cdef class FsmParse(MorphologicalParse):
         """
         if transitionName == "A1SG" or transitionName == "A2SG" or transitionName == "A3SG" or transitionName == "A1PL"\
                 or transitionName == "A2PL" or transitionName == "A3PL":
-            self.__verbAgreement = transitionName
+            self.__verb_agreement = transitionName
         if transitionName == "PNON" or transitionName == "P1SG" or transitionName == "P2SG" or transitionName == "P3SG"\
                 or transitionName == "P1PL" or transitionName == "P2PL" or transitionName == "P3PL":
-            self.__possesiveAgreement = transitionName
+            self.__possesive_agreement = transitionName
 
     cpdef str getLastLemmaWithTag(self, str pos):
         """
@@ -132,14 +134,14 @@ cdef class FsmParse(MorphologicalParse):
             String output lemma.
         """
         cdef int i
-        if self.__initialPos is not None and self.__initialPos == pos:
+        if self.__initial_pos is not None and self.__initial_pos == pos:
             lemma = self.root.getName()
         else:
             lemma = None
-        for i in range(1, len(self.__formList)):
-            if self.__transitionList[i - 1] is not None and ("^DB+" + pos) in self.__transitionList[i - 1] and \
-                    ("^DB+" + pos + "+ZERO") not in self.__transitionList[i - 1]:
-                lemma = self.__formList[i]
+        for i in range(1, len(self.__form_list)):
+            if self.__transition_list[i - 1] is not None and ("^DB+" + pos) in self.__transition_list[i - 1] and \
+                    ("^DB+" + pos + "+ZERO") not in self.__transition_list[i - 1]:
+                lemma = self.__form_list[i]
         return lemma
 
     cpdef str getLastLemma(self):
@@ -156,12 +158,17 @@ cdef class FsmParse(MorphologicalParse):
         cdef str lemma
         cdef int i
         lemma = self.root.getName()
-        for i in range(1, len(self.__formList)):
-            if self.__transitionList[i - 1] is not None and "^DB+" in self.__transitionList[i - 1]:
-                lemma = self.__formList[i]
+        for i in range(1, len(self.__form_list)):
+            if self.__transition_list[i - 1] is not None and "^DB+" in self.__transition_list[i - 1]:
+                lemma = self.__form_list[i]
         return lemma
 
-    cpdef addSuffix(self, State suffix, str form, str transition, str withName, str toPos):
+    cpdef addSuffix(self,
+                    State suffix,
+                    str form,
+                    str transition,
+                    str withName,
+                    str toPos):
         """
         The addSuffix method takes 5 different inputs; State suffix, str form, transition, with and toPos.
         If the pos of given input suffix is not None, it then assigns it to the pos variable. If the pos of the given
@@ -187,11 +194,11 @@ cdef class FsmParse(MorphologicalParse):
         else:
             if toPos is not None:
                 self.__pos = toPos
-        self.__suffixList.append(suffix)
-        self.__formList.append(form)
-        self.__transitionList.append(transition)
+        self.__suffix_list.append(suffix)
+        self.__form_list.append(form)
+        self.__transition_list.append(transition)
         if withName != "0":
-            self.__withList.append(withName)
+            self.__with_list.append(withName)
         self.__form = form
 
     cpdef str getSurfaceForm(self):
@@ -214,7 +221,7 @@ cdef class FsmParse(MorphologicalParse):
         State
             The first item of suffixList list.
         """
-        return self.__suffixList[0]
+        return self.__suffix_list[0]
 
     cpdef str getFinalPos(self):
         """
@@ -236,7 +243,7 @@ cdef class FsmParse(MorphologicalParse):
         str
             The initialPos variable.
         """
-        return self.__initialPos
+        return self.__initial_pos
 
     cpdef setForm(self, str name):
         """
@@ -249,8 +256,8 @@ cdef class FsmParse(MorphologicalParse):
             String input to set form.
         """
         self.__form = name
-        self.__formList.pop(0)
-        self.__formList.append(name)
+        self.__form_list.pop(0)
+        self.__form_list.append(name)
 
     cpdef State getFinalSuffix(self):
         """
@@ -261,7 +268,7 @@ cdef class FsmParse(MorphologicalParse):
         State
             The last item of suffixList list.
         """
-        return self.__suffixList[len(self.__suffixList) - 1]
+        return self.__suffix_list[len(self.__suffix_list) - 1]
 
     cpdef str headerTransition(self):
         """
@@ -279,17 +286,17 @@ cdef class FsmParse(MorphologicalParse):
         str
             Corresponding tags of the headers and an empty {@link String} if any case does not match.
         """
-        if self.__formList[0] == "<DOC>":
+        if self.__form_list[0] == "<DOC>":
             return "<DOC>+BDTAG"
-        elif self.__formList[0] == "</DOC>":
+        elif self.__form_list[0] == "</DOC>":
             return "</DOC>+EDTAG"
-        elif self.__formList[0] == "<TITLE>":
+        elif self.__form_list[0] == "<TITLE>":
             return "<TITLE>+BTTAG"
-        elif self.__formList[0] == "</TITLE>":
+        elif self.__form_list[0] == "</TITLE>":
             return "</TITLE>+ETTAG"
-        elif self.__formList[0] == "<S>":
+        elif self.__form_list[0] == "<S>":
             return "<S>+BSTAG"
-        elif self.__formList[0] == "</S>":
+        elif self.__form_list[0] == "</S>":
             return "</S>+ESTAG"
         else:
             return ""
@@ -319,35 +326,35 @@ cdef class FsmParse(MorphologicalParse):
         str
             Corresponding transitions of pronouns and an empty str if any case does not match.
         """
-        if self.__formList[0] == "kendi":
+        if self.__form_list[0] == "kendi":
             return "kendi+PRON+REFLEXP"
-        elif self.__formList[0] == "hep" or self.__formList[0] == "öbür" or self.__formList[0] == "topu" \
-                or self.__formList[0] == "öteki" or self.__formList[0] == "kimse" or self.__formList[0] == "hiçbiri" \
-                or self.__formList[0] == "tümü" or self.__formList[0] == "çoğu" or self.__formList[0] == "hepsi" \
-                or self.__formList[0] == "herkes" or self.__formList[0] == "başkası" or self.__formList[0] == "birçoğu"\
-                or self.__formList[0] == "birçokları" or self.__formList[0] == "birbiri" \
-                or self.__formList[0] == "birbirleri" or self.__formList[0] == "biri" \
-                or self.__formList[0] == "birkaçı" or self.__formList[0] == "böylesi" or self.__formList[0] == "diğeri"\
-                or self.__formList[0] == "cümlesi" or self.__formList[0] == "bazı" or self.__formList[0] == "kimi":
-            return self.__formList[0] + "+PRON+QUANTP"
-        elif (self.__formList[0] == "o" and self.__suffixList[0].getName() == "PronounRoot(DEMONS)") \
-                or self.__formList[0] == "bu" or self.__formList[0] == "şu":
-            return self.__formList[0] + "+PRON+DEMONSP"
-        elif self.__formList[0] == "ben":
-            return self.__formList[0] + "+PRON+PERS+A1SG+PNON"
-        elif self.__formList[0] == "sen":
-            return self.__formList[0] + "+PRON+PERS+A2SG+PNON"
-        elif self.__formList[0] == "o" and self.__suffixList[0].getName() == "PronounRoot(PERS)":
-            return self.__formList[0] + "+PRON+PERS+A3SG+PNON"
-        elif self.__formList[0] == "biz":
-            return self.__formList[0] + "+PRON+PERS+A1PL+PNON"
-        elif self.__formList[0] == "siz":
-            return self.__formList[0] + "+PRON+PERS+A2PL+PNON"
-        elif self.__formList[0] == "onlar":
+        elif self.__form_list[0] == "hep" or self.__form_list[0] == "öbür" or self.__form_list[0] == "topu" \
+                or self.__form_list[0] == "öteki" or self.__form_list[0] == "kimse" or self.__form_list[0] == "hiçbiri" \
+                or self.__form_list[0] == "tümü" or self.__form_list[0] == "çoğu" or self.__form_list[0] == "hepsi" \
+                or self.__form_list[0] == "herkes" or self.__form_list[0] == "başkası" or self.__form_list[0] == "birçoğu"\
+                or self.__form_list[0] == "birçokları" or self.__form_list[0] == "birbiri" \
+                or self.__form_list[0] == "birbirleri" or self.__form_list[0] == "biri" \
+                or self.__form_list[0] == "birkaçı" or self.__form_list[0] == "böylesi" or self.__form_list[0] == "diğeri"\
+                or self.__form_list[0] == "cümlesi" or self.__form_list[0] == "bazı" or self.__form_list[0] == "kimi":
+            return self.__form_list[0] + "+PRON+QUANTP"
+        elif (self.__form_list[0] == "o" and self.__suffix_list[0].getName() == "PronounRoot(DEMONS)") \
+                or self.__form_list[0] == "bu" or self.__form_list[0] == "şu":
+            return self.__form_list[0] + "+PRON+DEMONSP"
+        elif self.__form_list[0] == "ben":
+            return self.__form_list[0] + "+PRON+PERS+A1SG+PNON"
+        elif self.__form_list[0] == "sen":
+            return self.__form_list[0] + "+PRON+PERS+A2SG+PNON"
+        elif self.__form_list[0] == "o" and self.__suffix_list[0].getName() == "PronounRoot(PERS)":
+            return self.__form_list[0] + "+PRON+PERS+A3SG+PNON"
+        elif self.__form_list[0] == "biz":
+            return self.__form_list[0] + "+PRON+PERS+A1PL+PNON"
+        elif self.__form_list[0] == "siz":
+            return self.__form_list[0] + "+PRON+PERS+A2PL+PNON"
+        elif self.__form_list[0] == "onlar":
             return "o+PRON+PERS+A3PL+PNON"
-        elif self.__formList[0] == "nere" or self.__formList[0] == "ne" or self.__formList[0] == "kaçı" \
-                or self.__formList[0] == "kim" or self.__formList[0] == "hangi":
-            return self.__formList[0] + "+PRON+QUESP"
+        elif self.__form_list[0] == "nere" or self.__form_list[0] == "ne" or self.__form_list[0] == "kaçı" \
+                or self.__form_list[0] == "kim" or self.__form_list[0] == "hangi":
+            return self.__form_list[0] + "+PRON+QUESP"
         else:
             return ""
 
@@ -466,86 +473,86 @@ cdef class FsmParse(MorphologicalParse):
         """
         cdef str result, transition
         result = ""
-        if self.__suffixList[0].getName() == "NominalRoot" \
-                or self.__suffixList[0].getName() == "NominalRootNoPossesive" \
-                or self.__suffixList[0].getName() == "CompoundNounRoot" \
-                or self.__suffixList[0].getName() == "NominalRootPlural":
-            result = self.__formList[0] + "+NOUN"
-        elif self.__suffixList[0].getName().startswith("VerbalRoot") or self.__suffixList[0].getName() == "PassiveHn":
-            result = self.__formList[0] + "+VERB"
-        elif self.__suffixList[0].getName() == "CardinalRoot":
-            result = self.__formList[0] + "+NUM+CARD"
-        elif self.__suffixList[0].getName() == "FractionRoot":
-            result = self.__formList[0] + "+NUM+FRACTION"
-        elif self.__suffixList[0].getName() == "TimeRoot":
-            result = self.__formList[0] + "+TIME"
-        elif self.__suffixList[0].getName() == "RealRoot":
-            result = self.__formList[0] + "+NUM+REAL"
-        elif self.__suffixList[0].getName() == "Punctuation":
-            result = self.__formList[0] + "+PUNC"
-        elif self.__suffixList[0].getName() == "Hashtag":
-            result = self.__formList[0] + "+HASHTAG"
-        elif self.__suffixList[0].getName() == "DateRoot":
-            result = self.__formList[0] + "+DATE"
-        elif self.__suffixList[0].getName() == "RangeRoot":
-            result = self.__formList[0] + "+RANGE"
-        elif self.__suffixList[0].getName() == "Email":
-            result = self.__formList[0] + "+EMAIL"
-        elif self.__suffixList[0].getName() == "PercentRoot":
-            result = self.__formList[0] + "+PERCENT"
-        elif self.__suffixList[0].getName() == "DeterminerRoot":
-            result = self.__formList[0] + "+DET"
-        elif self.__suffixList[0].getName() == "ConjunctionRoot":
-            result = self.__formList[0] + "+CONJ"
-        elif self.__suffixList[0].getName() == "AdverbRoot":
-            result = self.__formList[0] + "+ADV"
-        elif self.__suffixList[0].getName() == "ProperRoot":
-            result = self.__formList[0] + "+NOUN+PROP"
-        elif self.__suffixList[0].getName() == "HeaderRoot":
+        if self.__suffix_list[0].getName() == "NominalRoot" \
+                or self.__suffix_list[0].getName() == "NominalRootNoPossesive" \
+                or self.__suffix_list[0].getName() == "CompoundNounRoot" \
+                or self.__suffix_list[0].getName() == "NominalRootPlural":
+            result = self.__form_list[0] + "+NOUN"
+        elif self.__suffix_list[0].getName().startswith("VerbalRoot") or self.__suffix_list[0].getName() == "PassiveHn":
+            result = self.__form_list[0] + "+VERB"
+        elif self.__suffix_list[0].getName() == "CardinalRoot":
+            result = self.__form_list[0] + "+NUM+CARD"
+        elif self.__suffix_list[0].getName() == "FractionRoot":
+            result = self.__form_list[0] + "+NUM+FRACTION"
+        elif self.__suffix_list[0].getName() == "TimeRoot":
+            result = self.__form_list[0] + "+TIME"
+        elif self.__suffix_list[0].getName() == "RealRoot":
+            result = self.__form_list[0] + "+NUM+REAL"
+        elif self.__suffix_list[0].getName() == "Punctuation":
+            result = self.__form_list[0] + "+PUNC"
+        elif self.__suffix_list[0].getName() == "Hashtag":
+            result = self.__form_list[0] + "+HASHTAG"
+        elif self.__suffix_list[0].getName() == "DateRoot":
+            result = self.__form_list[0] + "+DATE"
+        elif self.__suffix_list[0].getName() == "RangeRoot":
+            result = self.__form_list[0] + "+RANGE"
+        elif self.__suffix_list[0].getName() == "Email":
+            result = self.__form_list[0] + "+EMAIL"
+        elif self.__suffix_list[0].getName() == "PercentRoot":
+            result = self.__form_list[0] + "+PERCENT"
+        elif self.__suffix_list[0].getName() == "DeterminerRoot":
+            result = self.__form_list[0] + "+DET"
+        elif self.__suffix_list[0].getName() == "ConjunctionRoot":
+            result = self.__form_list[0] + "+CONJ"
+        elif self.__suffix_list[0].getName() == "AdverbRoot":
+            result = self.__form_list[0] + "+ADV"
+        elif self.__suffix_list[0].getName() == "ProperRoot":
+            result = self.__form_list[0] + "+NOUN+PROP"
+        elif self.__suffix_list[0].getName() == "HeaderRoot":
             result = self.headerTransition()
-        elif self.__suffixList[0].getName() == "InterjectionRoot":
-            result = self.__formList[0] + "+INTERJ"
-        elif self.__suffixList[0].getName() == "DuplicateRoot":
-            result = self.__formList[0] + "+DUP"
-        elif self.__suffixList[0].getName() == "CodeRoot":
-            result = self.__formList[0] + "+CODE"
-        elif self.__suffixList[0].getName() == "MetricRoot":
-            result = self.__formList[0] + "+METRIC"
-        elif self.__suffixList[0].getName() == "QuestionRoot":
+        elif self.__suffix_list[0].getName() == "InterjectionRoot":
+            result = self.__form_list[0] + "+INTERJ"
+        elif self.__suffix_list[0].getName() == "DuplicateRoot":
+            result = self.__form_list[0] + "+DUP"
+        elif self.__suffix_list[0].getName() == "CodeRoot":
+            result = self.__form_list[0] + "+CODE"
+        elif self.__suffix_list[0].getName() == "MetricRoot":
+            result = self.__form_list[0] + "+METRIC"
+        elif self.__suffix_list[0].getName() == "QuestionRoot":
             result = "mi+QUES"
-        elif self.__suffixList[0].getName() == "PostP":
-            if self.__formList[0] == "karşı" or self.__formList[0] == "ilişkin" or self.__formList[0] == "göre" \
-                    or self.__formList[0] == "kadar" or self.__formList[0] == "ait" or self.__formList[0] == "yönelik" \
-                    or self.__formList[0] == "rağmen" or self.__formList[0] == "değin" or self.__formList[0] == "dek" \
-                    or self.__formList[0] == "doğru" or self.__formList[0] == "karşın" or self.__formList[0] == "dair" \
-                    or self.__formList[0] == "atfen" or self.__formList[0] == "binaen" or self.__formList[
+        elif self.__suffix_list[0].getName() == "PostP":
+            if self.__form_list[0] == "karşı" or self.__form_list[0] == "ilişkin" or self.__form_list[0] == "göre" \
+                    or self.__form_list[0] == "kadar" or self.__form_list[0] == "ait" or self.__form_list[0] == "yönelik" \
+                    or self.__form_list[0] == "rağmen" or self.__form_list[0] == "değin" or self.__form_list[0] == "dek" \
+                    or self.__form_list[0] == "doğru" or self.__form_list[0] == "karşın" or self.__form_list[0] == "dair" \
+                    or self.__form_list[0] == "atfen" or self.__form_list[0] == "binaen" or self.__form_list[
                 0] == "hitaben" \
-                    or self.__formList[0] == "istinaden" or self.__formList[0] == "mahsuben" \
-                    or self.__formList[0] == "mukabil" or self.__formList[0] == "nazaran":
-                result = self.__formList[0] + "+POSTP+PCDAT"
-            elif self.__formList[0] == "sonra" or self.__formList[0] == "önce" or self.__formList[0] == "beri" \
-                    or self.__formList[0] == "fazla" or self.__formList[0] == "dolayı" or self.__formList[
+                    or self.__form_list[0] == "istinaden" or self.__form_list[0] == "mahsuben" \
+                    or self.__form_list[0] == "mukabil" or self.__form_list[0] == "nazaran":
+                result = self.__form_list[0] + "+POSTP+PCDAT"
+            elif self.__form_list[0] == "sonra" or self.__form_list[0] == "önce" or self.__form_list[0] == "beri" \
+                    or self.__form_list[0] == "fazla" or self.__form_list[0] == "dolayı" or self.__form_list[
                 0] == "itibaren" \
-                    or self.__formList[0] == "başka" or self.__formList[0] == "çok" or self.__formList[0] == "evvel" \
-                    or self.__formList[0] == "ötürü" or self.__formList[0] == "yana" or self.__formList[0] == "öte" \
-                    or self.__formList[0] == "aşağı" or self.__formList[0] == "yukarı" \
-                    or self.__formList[0] == "dışarı" or self.__formList[0] == "az" or self.__formList[0] == "gayrı":
-                result = self.__formList[0] + "+POSTP+PCABL"
-            elif self.__formList[0] == "yanısıra":
-                result = self.__formList[0] + "+POSTP+PCGEN"
-            elif self.__formList[0] == "birlikte" or self.__formList[0] == "beraber":
-                result = self.__formList[0] + "+POSTP+PCINS"
-            elif self.__formList[0] == "aşkın" or self.__formList[0] == "takiben":
-                result = self.__formList[0] + "+POSTP+PCACC"
+                    or self.__form_list[0] == "başka" or self.__form_list[0] == "çok" or self.__form_list[0] == "evvel" \
+                    or self.__form_list[0] == "ötürü" or self.__form_list[0] == "yana" or self.__form_list[0] == "öte" \
+                    or self.__form_list[0] == "aşağı" or self.__form_list[0] == "yukarı" \
+                    or self.__form_list[0] == "dışarı" or self.__form_list[0] == "az" or self.__form_list[0] == "gayrı":
+                result = self.__form_list[0] + "+POSTP+PCABL"
+            elif self.__form_list[0] == "yanısıra":
+                result = self.__form_list[0] + "+POSTP+PCGEN"
+            elif self.__form_list[0] == "birlikte" or self.__form_list[0] == "beraber":
+                result = self.__form_list[0] + "+POSTP+PCINS"
+            elif self.__form_list[0] == "aşkın" or self.__form_list[0] == "takiben":
+                result = self.__form_list[0] + "+POSTP+PCACC"
             else:
-                result = self.__formList[0] + "+POSTP+PCNOM"
-        elif self.__suffixList[0].getName().startswith("PronounRoot"):
+                result = self.__form_list[0] + "+POSTP+PCNOM"
+        elif self.__suffix_list[0].getName().startswith("PronounRoot"):
             result = self.pronounTransition()
-        elif self.__suffixList[0].getName() == "OrdinalRoot":
-            result = self.__formList[0] + "+NUM+ORD"
-        elif self.__suffixList[0].getName().startswith("Adjective"):
-            result = self.__formList[0] + "+ADJ"
-        for transition in self.__transitionList:
+        elif self.__suffix_list[0].getName() == "OrdinalRoot":
+            result = self.__form_list[0] + "+NUM+ORD"
+        elif self.__suffix_list[0].getName().startswith("Adjective"):
+            result = self.__form_list[0] + "+ADJ"
+        for transition in self.__transition_list:
             if transition is not None:
                 if not transition.startswith("^"):
                     result = result + "+" + transition
@@ -566,14 +573,14 @@ cdef class FsmParse(MorphologicalParse):
         """
         cdef str result
         cdef int i
-        result = self.__suffixList[0].getName() + "(" + self.__formList[0] + ")"
-        for i in range(1, len(self.__formList)):
-            if self.__formList[i] != self.__formList[i - 1]:
-                result = result + "+" + self.__suffixList[i].getName() + "(" + self.__formList[i] + ")"
+        result = self.__suffix_list[0].getName() + "(" + self.__form_list[0] + ")"
+        for i in range(1, len(self.__form_list)):
+            if self.__form_list[i] != self.__form_list[i - 1]:
+                result = result + "+" + self.__suffix_list[i].getName() + "(" + self.__form_list[i] + ")"
         return result
 
     cpdef list getWithList(self):
-        return self.__withList
+        return self.__with_list
 
     cpdef str withList(self):
         """
@@ -585,10 +592,10 @@ cdef class FsmParse(MorphologicalParse):
         str
             result str accumulated with items of withList.
         """
-        cdef str result, aWith
+        cdef str result, a_with
         result = self.root.getName()
-        for aWith in self.__withList:
-            result = result + "+" + aWith
+        for a_with in self.__with_list:
+            result = result + "+" + a_with
         return result
 
     def __str__(self) -> str:

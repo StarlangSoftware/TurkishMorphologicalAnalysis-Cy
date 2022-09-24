@@ -5,8 +5,8 @@ from MorphologicalAnalysis.State cimport State
 
 cdef class Transition:
 
-    cdef State __toState
-    cdef str __with, __withName, __formationToCheck, __toPos
+    cdef State __to_state
+    cdef str __with, __with_name, __formation_to_check, __to_pos
 
     cpdef State toState(self)
     cpdef str toPos(self)

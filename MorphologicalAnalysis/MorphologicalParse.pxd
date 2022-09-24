@@ -5,7 +5,7 @@ from MorphologicalAnalysis.InflectionalGroup cimport InflectionalGroup
 
 cdef class MorphologicalParse:
 
-    cdef list inflectionalGroups
+    cdef list inflectional_groups
     cdef Word root
 
     cpdef Word getWord(self)

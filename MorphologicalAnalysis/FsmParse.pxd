@@ -4,11 +4,11 @@ from MorphologicalAnalysis.State cimport State
 
 cdef class FsmParse(MorphologicalParse):
 
-    cdef list __suffixList
-    cdef list __formList
-    cdef list __transitionList
-    cdef list __withList
-    cdef str __initialPos, __pos, __form, __verbAgreement, __possesiveAgreement
+    cdef list __suffix_list
+    cdef list __form_list
+    cdef list __transition_list
+    cdef list __with_list
+    cdef str __initial_pos, __pos, __form, __verb_agreement, __possesive_agreement
 
     cpdef constructInflectionalGroups(self)
     cpdef str getVerbAgreement(self)

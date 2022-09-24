@@ -6,7 +6,7 @@ cdef class MetamorphicParse:
     """
     MetaMorphemes that can be used.
     """
-    metaMorphemes = ["Ar", "Ar", "CA", "CA",
+    meta_morphemes = ["Ar", "Ar", "CA", "CA",
                      "CA", "cAsHnA", "CH", "CHk",
                      "DA", "DAn", "DH", "DHk",
                      "DHkCA", "DHr", "DHr", "DHr",
@@ -17,28 +17,28 @@ cdef class MetamorphicParse:
                      "ki", "kü", "lAn", "lAr",
                      "lArDHr", "lArH", "lArH'", "lAs",
                      "lH", "lHk", "lHm", "m",
-                     "mA", "mA", "mAcA", "mAdAn",
-                     "mAk", "mAksHzHn", "mAktA", "mAlH",
-                     "mAzlHk", "mHs", "n", "n",
-                     "nA", "ncA", "nDA", "nDAn",
-                     "nH", "nHn", "nHz", "nlAr",
-                     "SA", "SAl", "sH", "SH",
-                     "SH", "SHn", "SHnHz", "SHnlAr",
-                     "SHz", "ŞAr", "t", "yA",
-                     "yA", "yAbil", "yAcAk", "yAcAk",
-                     "yAdur", "yAgel", "yAlH", "yAmA",
-                     "yAmAdAn", "yAn", "yArAk", "yAsH",
-                     "yDH", "yH", "yHcH", "yHm",
-                     "yHn", "yHncA", "yHp", "yHs",
-                     "yHver", "yHz", "yken", "ylA",
-                     "ymHs", "ysA", "z", "zsHn",
-                     "zsHnHz", "zlAr", "yAkal", "yAkoy",
-                     "yAgor"]
+                      "mA", "mA", "mAcA", "mAdAn",
+                      "mAk", "mAksHzHn", "mAktA", "mAlH",
+                      "mAzlHk", "mHs", "n", "n",
+                      "nA", "ncA", "nDA", "nDAn",
+                      "nH", "nHn", "nHz", "nlAr",
+                      "SA", "SAl", "sH", "SH",
+                      "SH", "SHn", "SHnHz", "SHnlAr",
+                      "SHz", "ŞAr", "t", "yA",
+                      "yA", "yAbil", "yAcAk", "yAcAk",
+                      "yAdur", "yAgel", "yAlH", "yAmA",
+                      "yAmAdAn", "yAn", "yArAk", "yAsH",
+                      "yDH", "yH", "yHcH", "yHm",
+                      "yHn", "yHncA", "yHp", "yHs",
+                      "yHver", "yHz", "yken", "ylA",
+                      "ymHs", "ysA", "z", "zsHn",
+                      "zsHnHz", "zlAr", "yAkal", "yAkoy",
+                      "yAgor"]
 
     """
     MorphotacticTags that can be used.
     """
-    morphotacticTags = [
+    morphotactic_tags = [
         MorphologicalTag.AORIST,
         MorphologicalTag.CAUSATIVE,
         MorphologicalTag.ASIF,
@@ -160,14 +160,14 @@ cdef class MetamorphicParse:
             String to parse.
         """
         if parse is not None:
-            self.__metaMorphemeList = []
+            self.__meta_morpheme_list = []
             if parse == "+":
                 self.__root = Word("+")
             else:
                 words = parse.split("\\+")
                 self.__root = Word(words[0])
                 for i in range(1, len(words)):
-                    self.__metaMorphemeList.append(words[i])
+                    self.__meta_morpheme_list.append(words[i])
 
     cpdef list getMetaMorphemeTag(self, str tag):
         """
@@ -192,9 +192,9 @@ cdef class MetamorphicParse:
         s = tag[0]
         if Word.isPunctuationSymbol(s):
             tag = tag[1:]
-        for j in range(len(MetamorphicParse.metaMorphemes)):
-            if tag == self.metaMorphemes[j]:
-                result.append(MetamorphicParse.morphotacticTags[j])
+        for j in range(len(MetamorphicParse.meta_morphemes)):
+            if tag == self.meta_morphemes[j]:
+                result.append(MetamorphicParse.morphotactic_tags[j])
         return result
 
     cpdef Word getWord(self):
@@ -231,9 +231,9 @@ cdef class MetamorphicParse:
         s = tag[0]
         if Word.isPunctuationSymbol(s):
             tag = tag[1:]
-        for j in range(len(MetamorphicParse.metaMorphemes)):
-            if tag == self.metaMorphemes[j] and parse.containsTag(MetamorphicParse.morphotacticTags[j]):
-                result.append(MetamorphicParse.morphotacticTags[j])
+        for j in range(len(MetamorphicParse.meta_morphemes)):
+            if tag == self.meta_morphemes[j] and parse.containsTag(MetamorphicParse.morphotactic_tags[j]):
+                result.append(MetamorphicParse.morphotactic_tags[j])
         return result
 
     cpdef int size(self):
@@ -245,7 +245,7 @@ cdef class MetamorphicParse:
         int
             The size of the metaMorphemeList.
         """
-        return len(self.__metaMorphemeList) + 1
+        return len(self.__meta_morpheme_list) + 1
 
     cpdef addMetaMorphemeList(self, str newTacticSet):
         """
@@ -258,7 +258,7 @@ cdef class MetamorphicParse:
         """
         cdef list tactics
         tactics = newTacticSet.split("\\+")
-        self.__metaMorphemeList.extend(tactics)
+        self.__meta_morpheme_list.extend(tactics)
 
     cpdef removeMetaMorphemeFromIndex(self, int index):
         """
@@ -271,8 +271,8 @@ cdef class MetamorphicParse:
         """
         cdef int i
         i = index - 1
-        while i < len(self.__metaMorphemeList):
-            self.__metaMorphemeList.pop(i)
+        while i < len(self.__meta_morpheme_list):
+            self.__meta_morpheme_list.pop(i)
 
     cpdef str getMetaMorpheme(self, int index):
         """
@@ -291,7 +291,7 @@ cdef class MetamorphicParse:
         if index == 0:
             return self.__root.getName()
         else:
-            return self.__metaMorphemeList[index - 1]
+            return self.__meta_morpheme_list[index - 1]
 
     def __str__(self) -> str:
         """
@@ -303,6 +303,6 @@ cdef class MetamorphicParse:
             String result.
         """
         result = self.__root.getName()
-        for metaMorpheme in self.__metaMorphemeList:
-            result = result + "+" + metaMorpheme
+        for meta_morpheme in self.__meta_morpheme_list:
+            result = result + "+" + meta_morpheme
         return result

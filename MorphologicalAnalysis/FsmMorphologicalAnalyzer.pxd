@@ -12,12 +12,12 @@ from MorphologicalAnalysis.MorphologicalParse cimport MorphologicalParse
 
 cdef class FsmMorphologicalAnalyzer:
 
-    cdef Trie __dictionaryTrie
-    cdef FiniteStateMachine __finiteStateMachine
+    cdef Trie __dictionary_trie
+    cdef FiniteStateMachine __finite_state_machine
     cdef TxtDictionary __dictionary
     cdef LRUCache __cache
-    cdef dict __mostUsedPatterns
-    cdef dict __parsedSurfaceForms
+    cdef dict __most_used_patterns
+    cdef dict __parsed_surface_forms
 
     cpdef addParsedSurfaceForms(self, str fileName)
     cpdef set getPossibleWords(self, MorphologicalParse morphologicalParse, MetamorphicParse metamorphicParse)

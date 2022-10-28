@@ -263,20 +263,20 @@ cdef class Transition:
                 return "bana"
             if stem == "sen":
                 return "sana"
-        self.__formation_to_check = stem
+        formation_to_check = stem
         if rootWord and self.__withFirstChar() == "y" and root.vowelEChangesToIDuringYSuffixation() \
                 and (self.__with[1] != "H" or root.getName() == "ye"):
             formation = stem[:len(stem) - 1] + "i"
-            self.__formation_to_check = formation
+            formation_to_check = formation
         else:
             if rootWord and (self.__with == "Hl" or self.__with == "Hn") and root.lastIdropsDuringPassiveSuffixation():
                 formation = stem[:len(stem) - 2] + stem[len(stem) - 1]
-                self.__formation_to_check = stem
+                formation_to_check = stem
             else:
                 if rootWord and root.showsSuRegularities() and self.__startWithVowelorConsonantDrops() and \
                         not self.__with.startswith("y"):
                     formation = stem + 'y'
-                    self.__formation_to_check = formation
+                    formation_to_check = formation
                 else:
                     if rootWord and root.duplicatesDuringSuffixation() and not startState.getName().startswith(
                                     "VerbalRoot") and TurkishLanguage.isConsonantDrop(self.__with[0]):
@@ -287,7 +287,7 @@ cdef class Transition:
                                 formation = stem[:len(stem) - 1] + "dd"
                         else:
                             formation = stem + stem[len(stem) - 1]
-                        self.__formation_to_check = formation
+                        formation_to_check = formation
                     else:
                         if rootWord and root.lastIdropsDuringSuffixation() and \
                                 not startState.getName().startswith(
@@ -302,7 +302,7 @@ cdef class Transition:
                                     formation = stem[:len(stem) - 2] + 'c'
                             else:
                                 formation = stem[:len(stem) - 2] + stem[len(stem) - 1]
-                            self.__formation_to_check = stem
+                            formation_to_check = stem
                         else:
                             if  Word.lastPhoneme(stem) == "p":
                                 if self.__startWithVowelorConsonantDrops() and rootWord and \
@@ -329,7 +329,7 @@ cdef class Transition:
                                             self.softenDuringSuffixation(root) and (
                                             not root.isProperNoun() or startState.__str__() != "ProperRoot"))):
                                         formation = stem[:len(stem) - 1] + 'ğ'
-                            self.__formation_to_check = formation
+                            formation_to_check = formation
         if TurkishLanguage.isConsonantDrop(self.__withFirstChar()) and not TurkishLanguage.isVowel(stem[len(stem) - 1])\
                 and (root.isNumeral() or root.isReal() or root.isFraction() or root.isTime() or root.isDate()
                      or root.isPercent() or root.isRange()) \
@@ -356,16 +356,16 @@ cdef class Transition:
                     i = 1
         while i < len(self.__with):
             if self.__with[i] == "D":
-                formation = MorphotacticEngine.resolveD(root, formation, self.__formation_to_check)
+                formation = MorphotacticEngine.resolveD(root, formation, formation_to_check)
             elif self.__with[i] == "A":
-                formation = MorphotacticEngine.resolveA(root, formation, rootWord, self.__formation_to_check)
+                formation = MorphotacticEngine.resolveA(root, formation, rootWord, formation_to_check)
             elif self.__with[i] == "H":
                 if self.__with[0] != "'":
-                    formation = MorphotacticEngine.resolveH(root, formation, i == 0, self.__with.startswith("Hyor"), rootWord, self.__formation_to_check)
+                    formation = MorphotacticEngine.resolveH(root, formation, i == 0, self.__with.startswith("Hyor"), rootWord, formation_to_check)
                 else:
-                    formation = MorphotacticEngine.resolveH(root, formation, i == 1, False, rootWord, self.__formation_to_check)
+                    formation = MorphotacticEngine.resolveH(root, formation, i == 1, False, rootWord, formation_to_check)
             elif self.__with[i] == "C":
-                formation = MorphotacticEngine.resolveC(formation, self.__formation_to_check)
+                formation = MorphotacticEngine.resolveC(formation, formation_to_check)
             elif self.__with[i] == "S":
                 formation = MorphotacticEngine.resolveS(formation)
             elif self.__with[i] == "Ş":
@@ -375,7 +375,7 @@ cdef class Transition:
                     formation += "ş"
                 else:
                     formation += self.__with[i]
-            self.__formation_to_check = formation
+            formation_to_check = formation
             i = i + 1
         return formation
 

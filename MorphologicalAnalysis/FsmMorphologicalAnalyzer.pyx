@@ -1035,6 +1035,12 @@ cdef class FsmMorphologicalAnalyzer:
         return "A" <= surfaceForm[0] <= "Z" or surfaceForm[0] == "Ç" or surfaceForm[0] == "Ö" or surfaceForm[0] == "Ğ" \
                or surfaceForm[0] == "Ü" or surfaceForm[0] == "Ş" or surfaceForm[0] == "İ"
 
+    cpdef bint __isCode(self, str surfaceForm):
+        if surfaceForm is None or len(surfaceForm) == 0:
+            return False
+        return self.patternMatches(".*[0-9].*", surfaceForm) and \
+               self.patternMatches(".*[a-zA-ZçöğüşıÇÖĞÜŞİ].*", surfaceForm)
+
     cpdef bint __isPercent(self, str surfaceForm):
         return self.patternMatches("%(\\d\\d|\\d)", surfaceForm) or \
                self.patternMatches("%(\\d\\d|\\d)\\.\\d+", surfaceForm)
@@ -1208,10 +1214,11 @@ cdef class FsmMorphologicalAnalyzer:
                 fsm_parse = []
                 if self.isProperNoun(surface_form):
                     fsm_parse.append(FsmParse(surface_form, self.__finite_state_machine.getState("ProperRoot")))
-                    return FsmParseList(self.__parseWord(fsm_parse, surface_form))
+                elif self.__isCode(surface_form):
+                    fsm_parse.append(FsmParse(surface_form, self.__finite_state_machine.getState("CodeRoot")))
                 else:
                     fsm_parse.append(FsmParse(surface_form, self.__finite_state_machine.getState("NominalRoot")))
-                    return FsmParseList(self.__parseWord(fsm_parse, surface_form))
+                return FsmParseList(self.__parseWord(fsm_parse, surface_form))
             else:
                 return current_parse
 
@@ -1231,7 +1238,7 @@ cdef class FsmMorphologicalAnalyzer:
             True if surfaceForm matches with the regex.
         """
         cdef int length
-        if not self.patternMatches("\\+?\\d+", surfaceForm):
+        if not self.patternMatches("[+-]?\\d+", surfaceForm):
             return False
         length = len(surfaceForm)
         if length < 10:
@@ -1255,7 +1262,7 @@ cdef class FsmMorphologicalAnalyzer:
         bool
             True if surfaceForm matches with the regex.
         """
-        return self.patternMatches("\\+?(\\d+)?\\.\\d*", surfaceForm)
+        return self.patternMatches("[+-]?(\\d+)?\\.\\d*", surfaceForm)
 
     cpdef bint __isNumber(self, str surfaceForm):
         """

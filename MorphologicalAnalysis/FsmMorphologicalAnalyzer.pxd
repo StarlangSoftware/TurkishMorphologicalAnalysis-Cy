@@ -48,5 +48,6 @@ cdef class FsmMorphologicalAnalyzer:
     cpdef bint __isTime(self, str surfaceForm)
     cpdef bint __isRange(self, str surfaceForm)
     cpdef bint __isDate(self, str surfaceForm)
+    cpdef bint __isCode(self, str surfaceForm)
     cpdef str __toLower(self, str surfaceForm)
     cpdef bint morphologicalAnalysisExists(self, TxtWord rootWord, str surfaceForm)

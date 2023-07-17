@@ -13,6 +13,7 @@ from MorphologicalAnalysis.MorphologicalParse cimport MorphologicalParse
 cdef class FsmMorphologicalAnalyzer:
 
     cdef Trie __dictionary_trie
+    cdef Trie __suffix_trie
     cdef FiniteStateMachine __finite_state_machine
     cdef TxtDictionary __dictionary
     cdef LRUCache __cache
@@ -51,3 +52,6 @@ cdef class FsmMorphologicalAnalyzer:
     cpdef bint __isCode(self, str surfaceForm)
     cpdef str __toLower(self, str surfaceForm)
     cpdef bint morphologicalAnalysisExists(self, TxtWord rootWord, str surfaceForm)
+    cpdef str reverseString(self, str s)
+    cpdef prepareSuffixTrie(self, str fileName)
+    cpdef TxtWord rootOfPossiblyNewWord(self, str surfaceForm)

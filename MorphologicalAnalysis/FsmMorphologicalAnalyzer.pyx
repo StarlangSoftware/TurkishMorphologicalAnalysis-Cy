@@ -44,7 +44,26 @@ cdef class FsmMorphologicalAnalyzer:
             self.__dictionary = TxtDictionary(dictionaryFileName, misspelledFileName)
         self.__finite_state_machine = FiniteStateMachine(fileName)
         self.__dictionary_trie = self.__dictionary.prepareTrie()
+        self.prepareSuffixTrie(pkg_resources.resource_filename(__name__, 'data/suffixes.txt'))
         self.__cache = LRUCache(cacheSize)
+
+    cpdef str reverseString(self, str s):
+        cdef str result
+        result = ""
+        for i in range(len(s) - 1, -1, -1):
+            result += s[i]
+        return result
+
+    cpdef prepareSuffixTrie(self, str fileName):
+        cdef list lines
+        cdef str suffix
+        self.__suffix_trie = Trie()
+        file = open(fileName, "r")
+        lines = file.readlines()
+        file.close()
+        for suffix in lines:
+            reverse_suffix = self.reverseString(suffix)
+            self.__suffix_trie.addWord(reverse_suffix, Word(reverse_suffix))
 
     cpdef addParsedSurfaceForms(self, str fileName):
         cdef list lines
@@ -1166,6 +1185,30 @@ cdef class FsmMorphologicalAnalyzer:
                 self.__cache.add(surface_form, fsm_parse_list)
             return fsm_parse_list
 
+    cpdef TxtWord rootOfPossiblyNewWord(self, str surfaceForm):
+        cdef set words
+        cdef int max_length
+        cdef str longest_word
+        cdef TxtWord new_word, word
+        words = self.__suffix_trie.getWordsWithPrefix(self.reverseString(surfaceForm))
+        max_length = 0
+        longest_word = None
+        for word in words:
+            if len(word.getName()) > max_length:
+                longest_word = surfaceForm[0: len(surfaceForm) - len(word.getName())]
+                max_length = len(word.getName())
+        if max_length != 0:
+            if longest_word.endswith("ğ"):
+                longest_word = longest_word[0: len(longest_word) - 1] + "k"
+                new_word = TxtWord(longest_word, "CL_ISIM")
+                new_word.addFlag("IS_SD")
+            else:
+                new_word = TxtWord(longest_word, "CL_ISIM")
+                new_word.addFlag("CL_FIIL")
+            self.__dictionary_trie.addWord(longest_word, new_word)
+            return new_word
+        return None
+
     cpdef robustMorphologicalAnalysis(self, sentenceOrSurfaceForm):
         """
         The robustMorphologicalAnalysis is used to analyse surfaceForm String. First it gets the currentParse of the
@@ -1194,6 +1237,7 @@ cdef class FsmMorphologicalAnalyzer:
         cdef str original_form, spell_corrected_form, surface_form
         cdef FsmParseList word_fsm_parse_list, current_parse
         cdef list fsm_parse
+        cdef TxtWord new_root
         if isinstance(sentenceOrSurfaceForm, Sentence):
             sentence = sentenceOrSurfaceForm
             result = []
@@ -1217,7 +1261,12 @@ cdef class FsmMorphologicalAnalyzer:
                 elif self.__isCode(surface_form):
                     fsm_parse.append(FsmParse(surface_form, self.__finite_state_machine.getState("CodeRoot")))
                 else:
-                    fsm_parse.append(FsmParse(surface_form, self.__finite_state_machine.getState("NominalRoot")))
+                    new_root = self.rootOfPossiblyNewWord(surface_form)
+                    if new_root is not None:
+                        fsm_parse.append(FsmParse(surface_form, self.__finite_state_machine.getState("VerbalRoot")))
+                        fsm_parse.append(FsmParse(surface_form, self.__finite_state_machine.getState("NominalRoot")))
+                    else:
+                        fsm_parse.append(FsmParse(surface_form, self.__finite_state_machine.getState("NominalRoot")))
                 return FsmParseList(self.__parseWord(fsm_parse, surface_form))
             else:
                 return current_parse

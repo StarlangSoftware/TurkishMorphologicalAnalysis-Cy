@@ -611,6 +611,12 @@ cdef class MorphologicalParse:
             return "-XXX-"
 
     cpdef str getPronType(self):
+        """
+        Returns the pronoun type of the parse for universal dependency feature ProType.
+        :return: "Art" if the pronoun is also a determiner; "Prs" if the pronoun is personal pronoun; "Rcp" if the
+        pronoun is 'birbiri'; "Ind" if the pronoun is an indeterminate pronoun; "Neg" if the pronoun is 'hiçbiri';
+        "Int" if the pronoun is a question pronoun; "Dem" if the pronoun is a demonstrative pronoun.
+        """
         cdef str lemma
         lemma = self.root.getName()
         if self.containsTag(MorphologicalTag.PERSONALPRONOUN):
@@ -625,6 +631,11 @@ cdef class MorphologicalParse:
         return ""
 
     cpdef str getNumType(self):
+        """
+        Returns the numeral type of the parse for universal dependency feature NumType.
+        :return: "Ord" if the parse is Time, Ordinal or the word is '%' or 'kaçıncı'; "Dist" if the word is a
+        distributive number such as 'beşinci'; "Card" if the number is cardinal or any number or the word is 'kaç'.
+        """
         cdef str lemma
         lemma = self.root.getName()
         if self.containsTag(MorphologicalTag.CARDINAL) or self.containsTag(MorphologicalTag.NUMBER) or lemma == "kaç":
@@ -636,6 +647,10 @@ cdef class MorphologicalParse:
         return ""
 
     cpdef str getReflex(self):
+        """
+        Returns the value for the dependency feature Reflex.
+        :return: "Yes" if the root word is 'kendi', null otherwise.
+        """
         cdef str lemma
         lemma = self.root.getName()
         if lemma == "kendi":
@@ -643,6 +658,11 @@ cdef class MorphologicalParse:
         return ""
 
     cpdef str getNumber(self):
+        """
+        Returns the agreement of the parse for the universal dependency feature Number.
+        :return: "Sing" if the agreement of the parse is singular (contains A1SG, A2SG, A3SG); "Plur" if the agreement
+        of the parse is plural (contains A1PL, A2PL, A3PL).
+        """
         if self.containsTag(MorphologicalTag.A1SG) or self.containsTag(MorphologicalTag.A2SG) or \
                 self.containsTag(MorphologicalTag.A3SG) or self.containsTag(MorphologicalTag.P1SG) or \
                 self.containsTag(MorphologicalTag.P2SG) or self.containsTag(MorphologicalTag.P3SG):
@@ -654,6 +674,11 @@ cdef class MorphologicalParse:
         return ""
 
     cpdef str getCase(self):
+        """
+        Returns the case marking of the parse for the universal dependency feature case.
+        :return: "Acc" for accusative marker; "Dat" for dative marker; "Gen" for genitive marker; "Loc" for locative
+        marker; "Ins" for instrumentative marker; "Abl" for ablative marker; "Nom" for nominative marker.
+        """
         if self.containsTag(MorphologicalTag.ACCUSATIVE) or self.containsTag(MorphologicalTag.PCACCUSATIVE):
             return "Acc"
         if self.containsTag(MorphologicalTag.DATIVE) or self.containsTag(MorphologicalTag.PCDATIVE):
@@ -671,6 +696,11 @@ cdef class MorphologicalParse:
         return ""
 
     cpdef str getDefinite(self):
+        """
+        Returns the definiteness of the parse for the universal dependency feature definite. It applies only for
+        determiners in Turkish.
+        :return: "Ind" for 'bir', 'bazı', or 'birkaç'. "Def" for 'her', 'bu', 'şu', 'o', 'bütün'.
+        """
         cdef str lemma
         lemma = self.root.getName()
         if self.containsTag(MorphologicalTag.DETERMINER):
@@ -681,6 +711,10 @@ cdef class MorphologicalParse:
         return ""
 
     cpdef str getDegree(self):
+        """
+        Returns the degree of the parse for the universal dependency feature degree.
+        :return: "Cmp" for comparative adverb 'daha'; "Sup" for superlative adjective or adverb 'en'.
+        """
         cdef str lemma
         lemma = self.root.getName()
         if lemma == "daha":
@@ -690,6 +724,10 @@ cdef class MorphologicalParse:
         return ""
 
     cpdef str getPolarity(self):
+        """
+        Returns the polarity of the verb for the universal dependency feature polarity.
+        :return: "Pos" for positive polarity containing tag POS; "Neg" for negative polarity containing tag NEG.
+        """
         if self.containsTag(MorphologicalTag.POSITIVE):
             return "Pos"
         if self.containsTag(MorphologicalTag.NEGATIVE):
@@ -697,6 +735,10 @@ cdef class MorphologicalParse:
         return ""
 
     cpdef str getPerson(self):
+        """
+        Returns the person of the agreement of the parse for the universal dependency feature person.
+        :return: "1" for first person; "2" for second person; "3" for third person.
+        """
         if self.containsTag(MorphologicalTag.A1SG) or self.containsTag(MorphologicalTag.A1PL) \
                 or self.containsTag(MorphologicalTag.P1SG) or self.containsTag(MorphologicalTag.P1PL):
             return "1"
@@ -709,6 +751,12 @@ cdef class MorphologicalParse:
         return ""
 
     cpdef str getVoice(self):
+        """
+        Returns the voice of the verb parse for the universal dependency feature voice.
+        :return: "CauPass" if the verb parse is both causative and passive; "Pass" if the verb parse is only passive;
+        "Rcp" if the verb parse is reciprocal; "Cau" if the verb parse is only causative; "Rfl" if the verb parse is
+        reflexive.
+        """
         if self.containsTag(MorphologicalTag.PASSIVE):
             return "Pass"
         if self.containsTag(MorphologicalTag.RECIPROCAL):
@@ -720,6 +768,11 @@ cdef class MorphologicalParse:
         return ""
 
     cpdef str getAspect(self):
+        """
+        Returns the aspect of the verb parse for the universal dependency feature aspect.
+        :return: "Perf" for past, narrative and future tenses; "Prog" for progressive tenses; "Hab" for Aorist; "Rapid"
+        for parses containing HASTILY tag; "Dur" for parses containing START, STAY or REPEAT tags.
+        """
         if self.containsTag(MorphologicalTag.PASTTENSE) or self.containsTag(MorphologicalTag.NARRATIVE) \
                 or self.containsTag(MorphologicalTag.FUTURE):
             return "Perf"
@@ -735,6 +788,11 @@ cdef class MorphologicalParse:
         return ""
 
     cpdef str getTense(self):
+        """
+        Returns the tense of the verb parse for universal dependency feature tense.
+        :return: "Past" for simple past tense; "Fut" for future tense; "Pqp" for narrative past tense; "Pres" for other
+        past tenses.
+        """
         if self.containsTag(MorphologicalTag.PASTTENSE):
             return "Past"
         if self.containsTag(MorphologicalTag.FUTURE):
@@ -746,6 +804,19 @@ cdef class MorphologicalParse:
         return ""
 
     cpdef str getMood(self):
+        """
+        Returns the modality of the verb parse for the universal dependency feature mood.
+        :return: "GenNecPot" if both necessitative and potential is combined with a suffix of general modality;
+        "CndGenPot" if both conditional and potential is combined with a suffix of general modality;
+        "GenNec" if necessitative is combined with a suffix of general modality;
+        "GenPot" if potential is combined with a suffix of general modality;
+        "NecPot" if necessitative is combined with potential;
+        "DesPot" if desiderative is combined with potential;
+        "CndPot" if conditional is combined with potential;
+        "CndGen" if conditional is combined with a suffix of general modality;
+        "Imp" for imperative; "Cnd" for simple conditional; "Des" for simple desiderative; "Opt" for optative; "Nec" for
+        simple necessitative; "Pot" for simple potential; "Gen" for simple suffix of a general modality.
+        """
         if self.containsTag(MorphologicalTag.IMPERATIVE):
             return "Imp"
         if self.containsTag(MorphologicalTag.CONDITIONAL):
@@ -762,6 +833,11 @@ cdef class MorphologicalParse:
         return ""
 
     cpdef str getVerbForm(self):
+        """
+        Returns the form of the verb parse for the universal dependency feature verbForm.
+        :return: "Part" for participles; "Vnoun" for infinitives; "Conv" for parses contaning tags SINCEDOINGSO,
+        WITHOUTHAVINGDONESO, WITHOUTBEINGABLETOHAVEDONESO, BYDOINGSO, AFTERDOINGSO, INFINITIVE3; "Fin" for others.
+        """
         if self.containsTag(MorphologicalTag.PASTPARTICIPLE) or self.containsTag(MorphologicalTag.FUTUREPARTICIPLE) \
                 or self.containsTag(MorphologicalTag.PRESENTPARTICIPLE):
             return "Part"
@@ -773,6 +849,12 @@ cdef class MorphologicalParse:
         return ""
 
     cpdef list getUniversalDependencyFeatures(self, str uPos):
+        """
+        Construct the universal dependency features as an array of strings. Each element represents a single feature.
+        Every feature is given as featureType = featureValue.
+        :param uPos: Universal dependency part of speech tag for the parse.
+        :return: An array of universal dependency features for this parse.
+        """
         cdef list feature_list
         cdef str pron_type, num_type, reflex, degree, number, case_, definite, polarity, person
         cdef str voice, aspect, tense, mood, verb_form
@@ -827,6 +909,12 @@ cdef class MorphologicalParse:
         return feature_list
 
     cpdef str getUniversalDependencyPos(self):
+        """
+        Returns the universal dependency part of speech for this parse.
+        :return: "AUX" for word 'değil; "PROPN" for proper nouns; "NOUN for nouns; "ADJ" for adjectives; "ADV" for
+        adverbs; "INTJ" for interjections; "VERB" for verbs; "PUNCT" for punctuation symbols; "DET" for determiners;
+        "NUM" for numerals; "PRON" for pronouns; "ADP" for post participles; "SCONJ" or "CCONJ" for conjunctions.
+        """
         cdef str lemma
         lemma = self.root.getName()
         if lemma == "değil":

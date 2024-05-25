@@ -580,6 +580,10 @@ cdef class FsmParse(MorphologicalParse):
         return result
 
     cpdef list getWithList(self):
+        """
+        Accessor to the __with_list list.
+        :return: __with_list list.
+        """
         return self.__with_list
 
     cpdef str withList(self):

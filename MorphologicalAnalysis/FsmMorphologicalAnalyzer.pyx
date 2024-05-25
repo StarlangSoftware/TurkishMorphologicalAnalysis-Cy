@@ -48,6 +48,11 @@ cdef class FsmMorphologicalAnalyzer:
         self.__cache = LRUCache(cacheSize)
 
     cpdef str reverseString(self, str s):
+        """
+        Constructs and returns the reverse string of a given string.
+        :param s: String to be reversed.
+        :return: Reverse of a given string.
+        """
         cdef str result
         result = ""
         for i in range(len(s) - 1, -1, -1):
@@ -55,6 +60,12 @@ cdef class FsmMorphologicalAnalyzer:
         return result
 
     cpdef prepareSuffixTrie(self, str fileName):
+        """
+        Constructs the suffix trie from the input file suffixes.txt. suffixes.txt contains the most frequent 6000
+        suffixes that a verb or a noun can take. The suffix trie is a trie that stores these suffixes in reverse form,
+        which can be then used to match a given word for its possible suffix content.
+        :param fileName: Name of the file that contains the suffixes
+        """
         cdef list lines
         cdef str suffix
         self.__suffix_trie = Trie()
@@ -66,6 +77,11 @@ cdef class FsmMorphologicalAnalyzer:
             self.__suffix_trie.addWord(reverse_suffix, Word(reverse_suffix))
 
     cpdef addParsedSurfaceForms(self, str fileName):
+        """
+        Reads the file for correct surface forms and their most frequent root forms, in other words, the surface forms
+        which have at least one morphological analysis in  Turkish.
+        :param fileName: Input file containing analyzable surface forms and their root forms.
+        """
         cdef list lines
         cdef str line
         self.__parsed_surface_forms = dict()
@@ -825,6 +841,13 @@ cdef class FsmMorphologicalAnalyzer:
                                Sentence original,
                                str previousWord,
                                str newWord):
+        """
+        Replaces previous lemma in the sentence with the new lemma. Both lemma can contain multiple words.
+        :param original: Original sentence to be replaced with.
+        :param previousWord: Root word in the original sentence
+        :param newWord: New word to be replaced.
+        :return: Newly generated sentence by replacing the previous word in the original sentence with the new word.
+        """
         cdef Sentence result
         cdef bint previous_word_multiple, new_word_multiple, replaced
         cdef str last_word, new_root_word, replaced_word
@@ -1027,6 +1050,15 @@ cdef class FsmMorphologicalAnalyzer:
     cpdef bint patternMatches(self,
                               str expr,
                               str value):
+        """
+        This method uses cache idea to speed up pattern matching in Fsm. __most_used_patterns stores the compiled forms
+        of the previously used patterns. When Fsm tries to match a string to a pattern, first we check if it exists in
+        __most_used_patterns. If it exists, we directly use the compiled pattern to match the string. Otherwise, new
+        pattern is compiled and put in the __most_used_patterns.
+        :param expr:
+        :param value:
+        :return:
+        """
         if expr in self.__most_used_patterns:
             return self.__most_used_patterns[expr].fullmatch(value) is not None
         else:
@@ -1055,26 +1087,52 @@ cdef class FsmMorphologicalAnalyzer:
                or surfaceForm[0] == "Ü" or surfaceForm[0] == "Ş" or surfaceForm[0] == "İ"
 
     cpdef bint __isCode(self, str surfaceForm):
+        """
+        The isCode method takes surfaceForm String as input and checks if it consists of both letters and numbers
+        :param surfaceForm: String to check for code-like word.
+        :return: True if it is a code-like word, return false otherwise.
+        """
         if surfaceForm is None or len(surfaceForm) == 0:
             return False
         return self.patternMatches(".*[0-9].*", surfaceForm) and \
                self.patternMatches(".*[a-zA-ZçöğüşıÇÖĞÜŞİ].*", surfaceForm)
 
     cpdef bint __isPercent(self, str surfaceForm):
+        """
+        Checks if a given surface form matches to a percent value. It should be something like %4, %45, %4.3 or %56.786
+        :param surfaceForm: Surface form to be checked.
+        :return: True if the surface form is in percent form
+        """
         return self.patternMatches("%(\\d\\d|\\d)", surfaceForm) or \
                self.patternMatches("%(\\d\\d|\\d)\\.\\d+", surfaceForm)
 
     cpdef bint __isTime(self, str surfaceForm):
+        """
+        Checks if a given surface form matches to a time form. It should be something like 3:34, 12:56 etc.
+        :param surfaceForm: Surface form to be checked.
+        :return: True if the surface form is in time form
+        """
         return self.patternMatches("(\\d\\d|\\d):(\\d\\d|\\d):(\\d\\d|\\d)", surfaceForm) or \
                 self.patternMatches("(\\d\\d|\\d):(\\d\\d|\\d)", surfaceForm)
 
     cpdef bint __isRange(self, str surfaceForm):
+        """
+        Checks if a given surface form matches to a range form. It should be something like 123-1400 or 12:34-15:78 or
+        3.45-4.67.
+        :param surfaceForm: Surface form to be checked.
+        :return: True if the surface form is in range form
+        """
         return self.patternMatches("\\d+-\\d+", surfaceForm) or \
                             self.patternMatches("(\\d\\d|\\d):(\\d\\d|\\d)-(\\d\\d|\\d):(\\d\\d|\\d)", surfaceForm) or \
                             self.patternMatches("(\\d\\d|\\d)\\.(\\d\\d|\\d)-(\\d\\d|\\d)\\.(\\d\\d|\\d)",
                                                 surfaceForm)
 
     cpdef bint __isDate(self, str surfaceForm):
+        """
+        Checks if a given surface form matches to a date form. It should be something like 3/10/2023 or 2.3.2012
+        :param surfaceForm: Surface form to be checked.
+        :return: True if the surface form is in date form
+        """
         return self.patternMatches("(\\d\\d|\\d)/(\\d\\d|\\d)/\\d+", surfaceForm) or \
                self.patternMatches("(\\d\\d|\\d)\\.(\\d\\d|\\d)\\.\\d+", surfaceForm)
 
@@ -1186,6 +1244,19 @@ cdef class FsmMorphologicalAnalyzer:
             return fsm_parse_list
 
     cpdef TxtWord rootOfPossiblyNewWord(self, str surfaceForm):
+        """
+        Identifies a possible new root word for a given surface form. It also adds the new root form to the dictionary
+        for further usage. The method first searches the suffix trie for the reverse string of the surface form. This
+        way, it can identify if the word has a suffix that is in the most frequently used suffix list. Since a word can
+        have multiple possible suffixes, the method identifies the longest suffix and returns the substring of the
+        surface form tht does not contain the suffix. Let say the word is 'googlelaştırdık', it will identify 'tık' as
+        a suffix and will return 'googlelaştır' as a possible root form. Another example will be 'homelesslerimizle', it
+        will identify 'lerimizle' as suffix and will return 'homeless' as a possible root form. If the root word ends
+        with 'ğ', it is replacesd with 'k'. 'morfolojikliğini' will return 'morfolojikliğ' then which will be replaced
+        with 'morfolojiklik'.
+        :param surfaceForm: Surface form for which we will identify a possible new root form.
+        :return: Possible new root form.
+        """
         cdef set words
         cdef int max_length
         cdef str longest_word
@@ -1348,6 +1419,11 @@ cdef class FsmMorphologicalAnalyzer:
         return len(word) == 0 and count > 1
 
     cpdef str __toLower(self, str surfaceForm):
+        """
+        Converts a word to its lower form.
+        :param surfaceForm: Surface form to convert.
+        :return: Lowered surface form.
+        """
         cdef str result
         if "I" in surfaceForm or "İ" in surfaceForm:
             result = ""

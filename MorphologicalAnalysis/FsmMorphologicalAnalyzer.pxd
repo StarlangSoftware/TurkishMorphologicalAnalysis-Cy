@@ -54,4 +54,4 @@ cdef class FsmMorphologicalAnalyzer:
     cpdef bint morphologicalAnalysisExists(self, TxtWord rootWord, str surfaceForm)
     cpdef str reverseString(self, str s)
     cpdef prepareSuffixTrie(self, str fileName)
-    cpdef TxtWord rootOfPossiblyNewWord(self, str surfaceForm)
+    cpdef list rootOfPossiblyNewWord(self, str surfaceForm)

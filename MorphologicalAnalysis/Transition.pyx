@@ -273,13 +273,13 @@ cdef class Transition:
         cdef bint root_word
         cdef str formation, root_name
         cdef int i
-        rootWord = root.getName() == stem or (root.getName() + "'") == stem
+        root_word = root.getName() == stem or (root.getName() + "'") == stem
         formation = stem
         i = 0
         root_name = root.getName()
         if self.__with == "0":
             return stem
-        if (stem == "bu" or stem == "şu" or stem == "o") and rootWord and self.__with == "ylA":
+        if (stem == "bu" or stem == "şu" or stem == "o") and root_word and self.__with == "ylA":
             return stem + "nunla"
         if self.__with == "yA":
             if stem == "ben":
@@ -287,21 +287,21 @@ cdef class Transition:
             if stem == "sen":
                 return "sana"
         formation_to_check = stem
-        if rootWord and self.__withFirstChar() == "y" and root.vowelEChangesToIDuringYSuffixation() \
+        if root_word and self.__withFirstChar() == "y" and root.vowelEChangesToIDuringYSuffixation() \
                 and (self.__with[1] != "H" or root.getName() == "ye"):
             formation = stem[:len(stem) - 1] + "i"
             formation_to_check = formation
         else:
-            if rootWord and (self.__with == "Hl" or self.__with == "Hn") and root.lastIdropsDuringPassiveSuffixation():
+            if root_word and (self.__with == "Hl" or self.__with == "Hn") and root.lastIdropsDuringPassiveSuffixation():
                 formation = stem[:len(stem) - 2] + stem[len(stem) - 1]
                 formation_to_check = stem
             else:
-                if rootWord and root.showsSuRegularities() and self.__startWithVowelorConsonantDrops() and \
+                if root_word and root.showsSuRegularities() and self.__startWithVowelorConsonantDrops() and \
                         not self.__with.startswith("y"):
                     formation = stem + 'y'
                     formation_to_check = formation
                 else:
-                    if rootWord and root.duplicatesDuringSuffixation() and not startState.getName().startswith(
+                    if root_word and root.duplicatesDuringSuffixation() and not startState.getName().startswith(
                                     "VerbalRoot") and TurkishLanguage.isConsonantDrop(self.__with[0]):
                         if self.softenDuringSuffixation(root):
                             if Word.lastPhoneme(stem) == "p":
@@ -312,7 +312,7 @@ cdef class Transition:
                             formation = stem + stem[len(stem) - 1]
                         formation_to_check = formation
                     else:
-                        if rootWord and root.lastIdropsDuringSuffixation() and \
+                        if root_word and root.lastIdropsDuringSuffixation() and \
                                 not startState.getName().startswith(
                                     "VerbalRoot") and not startState.getName().startswith("ProperRoot") \
                                 and self.__startWithVowelorConsonantDrops():
@@ -328,27 +328,27 @@ cdef class Transition:
                             formation_to_check = stem
                         else:
                             if  Word.lastPhoneme(stem) == "p":
-                                if self.__startWithVowelorConsonantDrops() and rootWord and \
+                                if self.__startWithVowelorConsonantDrops() and root_word and \
                                         self.softenDuringSuffixation(root):
                                     formation = stem[:len(stem) - 1] + 'b'
                             elif  Word.lastPhoneme(stem) == "t":
-                                if self.__startWithVowelorConsonantDrops() and rootWord and \
+                                if self.__startWithVowelorConsonantDrops() and root_word and \
                                         self.softenDuringSuffixation(root):
                                     formation = stem[:len(stem) - 1] + 'd'
                             elif  Word.lastPhoneme(stem) == "ç":
-                                if self.__startWithVowelorConsonantDrops() and rootWord and \
+                                if self.__startWithVowelorConsonantDrops() and root_word and \
                                         self.softenDuringSuffixation(root):
                                     formation = stem[:len(stem) - 1] + 'c'
                             elif  Word.lastPhoneme(stem) == "g":
-                                if self.__startWithVowelorConsonantDrops() and rootWord and \
+                                if self.__startWithVowelorConsonantDrops() and root_word and \
                                         self.softenDuringSuffixation(root):
                                     formation = stem[:len(stem) - 1] + 'ğ'
                             elif  Word.lastPhoneme(stem) == "k":
-                                if self.__startWithVowelorConsonantDrops() and rootWord and root.endingKChangesIntoG() \
+                                if self.__startWithVowelorConsonantDrops() and root_word and root.endingKChangesIntoG() \
                                         and (not root.isProperNoun() or startState.__str__() != "ProperRoot"):
                                     formation = stem[:len(stem) - 1] + 'g'
                                 else:
-                                    if self.__startWithVowelorConsonantDrops() and (not rootWord or (
+                                    if self.__startWithVowelorConsonantDrops() and (not root_word or (
                                             self.softenDuringSuffixation(root) and (
                                             not root.isProperNoun() or startState.__str__() != "ProperRoot"))):
                                         formation = stem[:len(stem) - 1] + 'ğ'
@@ -368,7 +368,7 @@ cdef class Transition:
                 i = 1
         else:
             if (TurkishLanguage.isConsonantDrop(self.__withFirstChar()) and TurkishLanguage.isConsonant(
-                    Word.lastPhoneme(stem))) or (rootWord and root.consonantSMayInsertedDuringPossesiveSuffixation()):
+                    Word.lastPhoneme(stem))) or (root_word and root.consonantSMayInsertedDuringPossesiveSuffixation()):
                 if self.__with[0] == "'":
                     formation = formation + "'"
                     if root.isAbbreviation():
@@ -381,12 +381,13 @@ cdef class Transition:
             if self.__with[i] == "D":
                 formation = MorphotacticEngine.resolveD(root, formation, formation_to_check)
             elif self.__with[i] == "A":
-                formation = MorphotacticEngine.resolveA(root, formation, rootWord, formation_to_check)
+                formation = MorphotacticEngine.resolveA(root, formation, root_word, formation_to_check)
             elif self.__with[i] == "H":
                 if self.__with[0] != "'":
-                    formation = MorphotacticEngine.resolveH(root, formation, i == 0, self.__with.startswith("Hyor"), rootWord, formation_to_check)
+                    formation = MorphotacticEngine.resolveH(root, formation, i == 0, self.__with.startswith("Hyor"), root_word, formation_to_check)
                 else:
-                    formation = MorphotacticEngine.resolveH(root, formation, i == 1, False, rootWord, formation_to_check)
+                    formation = MorphotacticEngine.resolveH(root, formation, i == 1, False, root_word, formation_to_check)
+                root_word = False
             elif self.__with[i] == "C":
                 formation = MorphotacticEngine.resolveC(formation, formation_to_check)
             elif self.__with[i] == "S":

@@ -73,7 +73,7 @@ cdef class FsmMorphologicalAnalyzer:
         lines = file.readlines()
         file.close()
         for suffix in lines:
-            reverse_suffix = self.reverseString(suffix)
+            reverse_suffix = self.reverseString(suffix.strip())
             self.__suffix_trie.addWord(reverse_suffix, Word(reverse_suffix))
 
     cpdef addParsedSurfaceForms(self, str fileName):
@@ -1243,7 +1243,7 @@ cdef class FsmMorphologicalAnalyzer:
                 self.__cache.add(surface_form, fsm_parse_list)
             return fsm_parse_list
 
-    cpdef TxtWord rootOfPossiblyNewWord(self, str surfaceForm):
+    cpdef list rootOfPossiblyNewWord(self, str surfaceForm):
         """
         Identifies a possible new root word for a given surface form. It also adds the new root form to the dictionary
         for further usage. The method first searches the suffix trie for the reverse string of the surface form. This
@@ -1258,27 +1258,24 @@ cdef class FsmMorphologicalAnalyzer:
         :return: Possible new root form.
         """
         cdef set words
-        cdef int max_length
-        cdef str longest_word
-        cdef TxtWord new_word, word
+        cdef str candidate_word
+        cdef list candidate_list
+        cdef TxtWord new_word
+        cdef Word word
+        candidate_list = []
         words = self.__suffix_trie.getWordsWithPrefix(self.reverseString(surfaceForm))
-        max_length = 0
-        longest_word = None
         for word in words:
-            if len(word.getName()) > max_length:
-                longest_word = surfaceForm[0: len(surfaceForm) - len(word.getName())]
-                max_length = len(word.getName())
-        if max_length != 0:
-            if longest_word.endswith("ğ"):
-                longest_word = longest_word[0: len(longest_word) - 1] + "k"
-                new_word = TxtWord(longest_word, "CL_ISIM")
+            candidate_word = surfaceForm[0: len(surfaceForm) - len(word.getName())]
+            if candidate_word.endswith("ğ"):
+                candidate_word = candidate_word[0: len(candidate_word) - 1] + "k"
+                new_word = TxtWord(candidate_word, "CL_ISIM")
                 new_word.addFlag("IS_SD")
             else:
-                new_word = TxtWord(longest_word, "CL_ISIM")
+                new_word = TxtWord(candidate_word, "CL_ISIM")
                 new_word.addFlag("CL_FIIL")
-            self.__dictionary_trie.addWord(longest_word, new_word)
-            return new_word
-        return None
+            candidate_list.append(new_word)
+            self.__dictionary_trie.addWord(candidate_word, new_word)
+        return candidate_list
 
     cpdef robustMorphologicalAnalysis(self, sentenceOrSurfaceForm):
         """
@@ -1307,7 +1304,7 @@ cdef class FsmMorphologicalAnalyzer:
         cdef int i
         cdef str original_form, spell_corrected_form, surface_form
         cdef FsmParseList word_fsm_parse_list, current_parse
-        cdef list fsm_parse
+        cdef list fsm_parse, new_candidate_list
         cdef TxtWord new_root
         if isinstance(sentenceOrSurfaceForm, Sentence):
             sentence = sentenceOrSurfaceForm
@@ -1329,15 +1326,14 @@ cdef class FsmMorphologicalAnalyzer:
                 fsm_parse = []
                 if self.isProperNoun(surface_form):
                     fsm_parse.append(FsmParse(surface_form, self.__finite_state_machine.getState("ProperRoot")))
-                elif self.__isCode(surface_form):
+                if self.__isCode(surface_form):
                     fsm_parse.append(FsmParse(surface_form, self.__finite_state_machine.getState("CodeRoot")))
-                else:
-                    new_root = self.rootOfPossiblyNewWord(surface_form)
-                    if new_root is not None:
-                        fsm_parse.append(FsmParse(surface_form, self.__finite_state_machine.getState("VerbalRoot")))
-                        fsm_parse.append(FsmParse(surface_form, self.__finite_state_machine.getState("NominalRoot")))
-                    else:
-                        fsm_parse.append(FsmParse(surface_form, self.__finite_state_machine.getState("NominalRoot")))
+                new_candidate_list = self.rootOfPossiblyNewWord(surface_form)
+                if len(new_candidate_list) != 0:
+                    for word in new_candidate_list:
+                        fsm_parse.append(FsmParse(word, self.__finite_state_machine.getState("VerbalRoot")))
+                        fsm_parse.append(FsmParse(word, self.__finite_state_machine.getState("NominalRoot")))
+                fsm_parse.append(FsmParse(surface_form, self.__finite_state_machine.getState("NominalRoot")))
                 return FsmParseList(self.__parseWord(fsm_parse, surface_form))
             else:
                 return current_parse

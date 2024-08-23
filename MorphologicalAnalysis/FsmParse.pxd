@@ -29,3 +29,4 @@ cdef class FsmParse(MorphologicalParse):
     cpdef str suffixList(self)
     cpdef str withList(self)
     cpdef list getWithList(self)
+    cpdef restoreOriginalForm(self, str original, str pronunciation)

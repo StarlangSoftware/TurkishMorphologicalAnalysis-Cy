@@ -19,8 +19,10 @@ cdef class FsmMorphologicalAnalyzer:
     cdef LRUCache __cache
     cdef dict __most_used_patterns
     cdef dict __parsed_surface_forms
+    cdef dict __pronunciations
 
     cpdef addParsedSurfaceForms(self, str fileName)
+    cpdef addPronunciations(self, str fileName)
     cpdef set getPossibleWords(self, MorphologicalParse morphologicalParse, MetamorphicParse metamorphicParse)
     cpdef TxtDictionary getDictionary(self)
     cpdef FiniteStateMachine getFiniteStateMachine(self)

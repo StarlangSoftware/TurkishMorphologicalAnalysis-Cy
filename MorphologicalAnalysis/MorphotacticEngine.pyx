@@ -169,6 +169,8 @@ cdef class MorphotacticEngine:
                         return formation + 'u'
                     else:
                         return formation + 'i'
+        if Word.lastVowel(formationToCheck) == '0':
+            return formation + 'i'
         return formation
 
     @staticmethod

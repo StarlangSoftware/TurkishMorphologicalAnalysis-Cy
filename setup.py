@@ -8,8 +8,8 @@ from Cython.Build import cythonize
 setup(
     ext_modules=cythonize(["MorphologicalAnalysis/*.pyx", "DisambiguationCorpus/*.pyx"],
                           compiler_directives={'language_level': "3"}),
-    name='NlpToolkit-MorphologicalAnalysis-Cy',
-    version='1.0.30',
+    name='nlptoolkit-morphologicalanalysis-cy',
+    version='1.0.31',
     packages=['MorphologicalAnalysis', 'MorphologicalAnalysis.data', 'DisambiguationCorpus'],
     package_data={'MorphologicalAnalysis': ['*.pxd', '*.pyx', '*.c', '*.py'],
                   'DisambiguationCorpus': ['*.pxd', '*.pyx', '*.c', '*.py'],

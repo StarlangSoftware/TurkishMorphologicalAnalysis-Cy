@@ -9,7 +9,7 @@ setup(
     ext_modules=cythonize(["MorphologicalAnalysis/*.pyx", "DisambiguationCorpus/*.pyx"],
                           compiler_directives={'language_level': "3"}),
     name='nlptoolkit-morphologicalanalysis-cy',
-    version='1.0.33',
+    version='1.0.34',
     packages=['MorphologicalAnalysis', 'MorphologicalAnalysis.data', 'DisambiguationCorpus'],
     package_data={'MorphologicalAnalysis': ['*.pxd', '*.pyx', '*.c', '*.py'],
                   'DisambiguationCorpus': ['*.pxd', '*.pyx', '*.c', '*.py'],
